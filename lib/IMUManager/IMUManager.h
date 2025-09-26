@@ -2,7 +2,7 @@
 #define IMU_MANAGER_H_
 
 #include "IMUData.h"
-#include <cstdint>
+#include "stdint.h"
 
 class IMUManager {
     private:

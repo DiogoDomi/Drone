@@ -1,6 +1,6 @@
 #include "IMUManager.h"
 #include <Wire.h>
-#include <cmath>
+#include <Arduino.h>
 
 namespace {
     constexpr uint8_t MPU_ADDR = 0x68;
@@ -45,7 +45,6 @@ namespace {
     };
 
     constexpr float MICROS_TO_SEC = 1000000.0F;
-    constexpr float RAD_TO_DEG = 57.29578F;
     constexpr float ALPHA = 0.98F;
 
     constexpr uint16_t WAIT_TIME_US = 10000;
@@ -55,7 +54,7 @@ namespace {
 IMUManager::IMUManager() {}
 
 void IMUManager::setupConfig() {
-    Wire.begin(0, 5);
+    Wire.begin();
 
     Wire.beginTransmission(MPU_ADDR);
     Wire.write(POWER_ADDR);
@@ -119,6 +118,9 @@ bool IMUManager::calibrate() {
     for (uint16_t i = 0; i < calibCounter; i++) {
         while (micros() - lastLoop <= WAIT_TIME_US);
         lastLoop = micros();
+
+        yield();
+
         if (readData()) {
             RawIMUData rawData = getRawData();
 
@@ -166,8 +168,8 @@ void IMUManager::update() {
     float gyrY = rawData.gyrY - m_offsetGyrY;
     float gyrZ = rawData.gyrZ - m_offsetGyrZ;
 
-    accelPitch = atan2f(accY, accZ) * RAD_TO_DEG;
-    accelRoll = atan2f(-accX, sqrt(accY*accY + accZ*accZ)) * RAD_TO_DEG;
+    accelPitch = atan2f(accX, accZ) * RAD_TO_DEG;
+    accelRoll = atan2f(-accY, sqrt(accX*accX + accZ*accZ)) * RAD_TO_DEG;
 
     m_data.pitch = ALPHA * (m_data.pitch + gyrX * elapsedTime) + (1.0F - ALPHA) * accelPitch;
     m_data.roll = ALPHA * (m_data.roll + gyrY * elapsedTime) + (1.0F - ALPHA) * accelRoll;
