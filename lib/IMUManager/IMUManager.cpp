@@ -1,6 +1,7 @@
 #include "IMUManager.h"
 #include "I2Cdev.h"
 #include "Wire.h"
+#include "Pins.h"
 
 namespace { IMUManager* g_pInstance = nullptr; }
 
@@ -11,10 +12,8 @@ void IRAM_ATTR imu_isr_wrapper() {
 }
 
 namespace {
-    enum Axis : uint8_t { X = 0, Y = 1, Z = 2 };
-    enum Angles : uint8_t { YAW = 0, PITCH = 1, ROLL = 2 };
+    enum class Angles : uint8_t { YAW = 0, PITCH = 1, ROLL = 2 };
 
-    constexpr uint8_t INTERRUPT_PIN = 14;
     constexpr uint8_t HARDWARE_LOOPS = 10;
     constexpr uint16_t SOFTWARE_LOOPS = 200;
     constexpr float MICROS_TO_SEC = 1000000.0F;
@@ -36,7 +35,7 @@ void IMUManager::setupConfig() {
     Wire.begin();
     Wire.setClock(400000);
     m_mpu.initialize();
-    pinMode(INTERRUPT_PIN, INPUT);
+    pinMode(Pins::MPU::INTERRUPT_PIN, INPUT);
     m_devStatus = m_mpu.dmpInitialize();
 }
 
@@ -50,7 +49,7 @@ bool IMUManager::isDMPEnabled() {
         return false;
     }
     m_mpu.setDMPEnabled(true);
-    attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), imu_isr_wrapper, RISING);
+    attachInterrupt(digitalPinToInterrupt(Pins::MPU::INTERRUPT_PIN), imu_isr_wrapper, RISING);
     m_intStatus = m_mpu.getIntStatus();
     m_dmpReady = true;
     m_packetSize = m_mpu.dmpGetFIFOPacketSize();
@@ -99,9 +98,9 @@ bool IMUManager::readRawYPR(IMUData& data) {
         float ypr[3]{};
         m_mpu.dmpGetYawPitchRoll(ypr, &m_quaternion, &m_gravity);
 
-        data.yaw = ypr[YAW] * 180/M_PI;
-        data.pitch = ypr[PITCH] * 180/M_PI;
-        data.roll = ypr[ROLL] * 180/M_PI;
+        data.yaw = ypr[static_cast<uint8_t>(Angles::YAW)] * 180/M_PI;
+        data.pitch = ypr[static_cast<uint8_t>(Angles::PITCH)] * 180/M_PI;
+        data.roll = ypr[static_cast<uint8_t>(Angles::ROLL)] * 180/M_PI;
 
         return true;
     }
