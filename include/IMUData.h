@@ -2,7 +2,7 @@
 #define IMU_DATA_H_
 
 struct IMUData {
-    float elapsedTime{};
+    float deltaTime{};
     float pitch{};
     float roll{};
     float yaw{};
