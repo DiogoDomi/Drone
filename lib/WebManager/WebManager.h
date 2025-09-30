@@ -3,7 +3,7 @@
 
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
-#include "JoyData.h"
+#include "JoystickData.h"
 #include "GPSData.h"
 #include "State.h"
 
@@ -11,7 +11,7 @@ class WebManager {
     private:
         struct TelemetryCache {
             State state{};
-            uint8_t rssi{};
+            int8_t rssi{};
             GPSData gps{};
         };
 
@@ -21,8 +21,8 @@ class WebManager {
         AsyncWebSocket& m_socket;
 
         TelemetryCache m_telemetryCache{};
-        JoyData m_data{};
-        bool m_stateChangeRequest{};
+        JoystickData m_data{};
+        bool m_stateChangeRequested{};
 
         JsonDocument m_requestDoc{};
 
@@ -32,8 +32,8 @@ class WebManager {
         void setupSocket();
         void onEventHandler(AsyncWebSocket* socket, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len);
         void handleWebSocketMessage(void* arg, uint8_t* data, size_t len);
-        void onConnectSendTelemetry(AsyncWebSocketClient* client);
-        void onConnectSendJoyData(AsyncWebSocketClient* client);
+        void onConnectSendTelemetry(AsyncWebSocketClient* client) const;
+        void onConnectSendJoystickData(AsyncWebSocketClient* client) const;
 
     public:
 
@@ -42,8 +42,8 @@ class WebManager {
         void update();
         void cacheTelemetry(const GPSData& gps, int8_t rssi, State state);
         void sendTelemetry(const GPSData& gps, int8_t rssi, State state) const;
-        JoyData getData() const;
-        bool consumeStateChangeRequest();
+        bool hasStateChangeRequest();
+        JoystickData getData() const;
 
 };
 
