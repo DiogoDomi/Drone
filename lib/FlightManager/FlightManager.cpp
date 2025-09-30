@@ -35,8 +35,6 @@ void FlightManager::begin() {
 
     m_currentState = State::DISARMED;
     setMotorState();
-
-    delay(1000);
 }
 
 void FlightManager::setupMotors() {
