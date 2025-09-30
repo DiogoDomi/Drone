@@ -22,7 +22,6 @@ class WiFiManager {
         void begin();
         void update();
         int8_t getRSSI() const;
-        bool isStaConnected() const;
 
 };
 

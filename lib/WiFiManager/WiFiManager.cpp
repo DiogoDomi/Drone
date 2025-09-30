@@ -55,7 +55,3 @@ void WiFiManager::update() {
 int8_t WiFiManager::getRSSI() const {
     return m_rssi;
 }
-
-bool WiFiManager::isStaConnected() const {
-    return m_staStatus == WL_CONNECTED;
-}
