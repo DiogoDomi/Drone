@@ -1,5 +1,6 @@
 #include "WiFiManager.h"
 #include <ESP8266WiFi.h>
+#include "Flags.h"
 
 namespace {
     const char *AP_SSID = "DroneController";
@@ -41,7 +42,7 @@ void WiFiManager::update() {
             m_rssi = WiFi.RSSI();
         }
     } else {
-        m_rssi = -127;
+        m_rssi = Flags::WIFI_RSSI_INVALID;
     }
 }
 
