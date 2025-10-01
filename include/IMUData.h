@@ -3,6 +3,7 @@
 
 struct IMUData {
     float deltaTime{}, pitch{}, roll{}, yaw{};
+    float gyroZ{};
 };
 
 #endif
