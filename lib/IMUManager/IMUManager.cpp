@@ -13,6 +13,12 @@ namespace {
     constexpr float MICROS_TO_SEC = 1000000.0F;
 }
 
+void IRAM_ATTR imu_isr_wrapper() {
+    if (g_pInstance) { g_pInstance->dmpDataReady(); }
+}
+
+void IMUManager::dmpDataReady() { m_interrupt = true; }
+
 IMUManager::IMUManager() { g_pInstance = this; }
 
 void IMUManager::begin() {
@@ -121,9 +127,3 @@ void IMUManager::update() {
 }
 
 IMUData IMUManager::getData() const { return m_mpuData; }
-
-void IMUManager::dmpDataReady() { m_interrupt = true; }
-
-void IRAM_ATTR imu_isr_wrapper() {
-    if (g_pInstance) { g_pInstance->dmpDataReady(); }
-}
