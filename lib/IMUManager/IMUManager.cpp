@@ -3,15 +3,9 @@
 #include "Wire.h"
 #include "Pins.h"
 
-namespace { IMUManager* g_pInstance = nullptr; }
-
-void IRAM_ATTR imu_isr_wrapper() {
-    if (g_pInstance) {
-        g_pInstance->dmpDataReady();
-    }
-}
-
 namespace {
+    IMUManager* g_pInstance = nullptr;
+
     enum class Angles : uint8_t { YAW = 0, PITCH = 1, ROLL = 2 };
 
     constexpr uint8_t HARDWARE_LOOPS = 10;
@@ -20,8 +14,6 @@ namespace {
 }
 
 IMUManager::IMUManager() { g_pInstance = this; }
-
-void IMUManager::dmpDataReady() { m_interrupt = true; }
 
 void IMUManager::begin() {
     setupConfig();
@@ -60,15 +52,14 @@ void IMUManager::calibrateSoftwareOffsets() {
     uint16_t successfulReads = 0;
     IMUData rawReading{};
 
-    m_swOffsets = IMUData();
-
     for (uint16_t i = 0; i < SOFTWARE_LOOPS; i++) {
         while (!m_interrupt) { yield(); }
 
-        if (readRawYPR(rawReading)) {
+        if (readDMPData(rawReading)) {
             m_swOffsets.yaw += rawReading.yaw;
             m_swOffsets.pitch += rawReading.pitch;
             m_swOffsets.roll += rawReading.roll;
+            m_swOffsets.gyroZ += rawReading.gyroZ;
             successfulReads++;
         }
     }
@@ -76,10 +67,11 @@ void IMUManager::calibrateSoftwareOffsets() {
         m_swOffsets.yaw /= successfulReads;
         m_swOffsets.pitch /= successfulReads;
         m_swOffsets.roll /= successfulReads;
+        m_swOffsets.gyroZ /= successfulReads;
     }
 }
 
-bool IMUManager::readRawYPR(IMUData& data) {
+bool IMUManager::readDMPData(IMUData& data) {
     m_interrupt = false;
     m_intStatus = m_mpu.getIntStatus();
     m_fifoCount = m_mpu.getFIFOCount();
@@ -89,8 +81,10 @@ bool IMUManager::readRawYPR(IMUData& data) {
         return false;
     } else if (m_intStatus & 0x02) {
         if (m_fifoCount < m_packetSize) { return false; }
-        m_mpu.getFIFOBytes(m_fifoBuffer, m_packetSize);
-        m_fifoCount -= m_packetSize;
+        while (m_fifoCount >= m_packetSize) {
+            m_mpu.getFIFOBytes(m_fifoBuffer, m_packetSize);
+            m_fifoCount -= m_packetSize;
+        }
 
         m_mpu.dmpGetQuaternion(&m_quaternion, m_fifoBuffer);
         m_mpu.dmpGetGravity(&m_gravity, &m_quaternion);
@@ -98,9 +92,13 @@ bool IMUManager::readRawYPR(IMUData& data) {
         float ypr[3]{};
         m_mpu.dmpGetYawPitchRoll(ypr, &m_quaternion, &m_gravity);
 
+        VectorInt16 gyro{};
+        m_mpu.dmpGetGyro(&gyro, m_fifoBuffer);
+
         data.yaw = ypr[static_cast<uint8_t>(Angles::YAW)] * 180/M_PI;
         data.pitch = ypr[static_cast<uint8_t>(Angles::PITCH)] * 180/M_PI;
         data.roll = ypr[static_cast<uint8_t>(Angles::ROLL)] * 180/M_PI;
+        data.gyroZ = static_cast<float>(gyro.z) / 131.0F;
 
         return true;
     }
@@ -111,16 +109,21 @@ void IMUManager::update() {
     if (!m_interrupt) { return; }
 
     IMUData rawReading{};
-    if (readRawYPR(rawReading)) {
+    if (readDMPData(rawReading)) {
         m_mpuData.deltaTime = static_cast<float>(micros() - m_previousTime) / MICROS_TO_SEC;
         m_previousTime = micros();
 
         m_mpuData.yaw = rawReading.yaw - m_swOffsets.yaw;
         m_mpuData.pitch = rawReading.pitch - m_swOffsets.pitch;
         m_mpuData.roll = rawReading.roll - m_swOffsets.roll;
+        m_mpuData.gyroZ = rawReading.gyroZ - m_swOffsets.gyroZ;
     }
 }
 
-IMUData IMUManager::getData() const {
-    return m_mpuData;
+IMUData IMUManager::getData() const { return m_mpuData; }
+
+void IMUManager::dmpDataReady() { m_interrupt = true; }
+
+void IRAM_ATTR imu_isr_wrapper() {
+    if (g_pInstance) { g_pInstance->dmpDataReady(); }
 }
