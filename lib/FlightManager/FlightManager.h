@@ -34,8 +34,6 @@ class FlightManager {
         float m_pitchPidOutput{};
         float m_rollPidOutput{};
 
-        float m_previousYaw{};
-
         unsigned long m_previousDebugTime{};
 
     private:

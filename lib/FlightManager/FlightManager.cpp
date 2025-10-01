@@ -93,10 +93,9 @@ void FlightManager::mapJoystick(const JoystickData& joystickData) {
 }
 
 void FlightManager::calculatePID() {
-    float yawRate = (m_imuData.yaw - m_previousYaw) / m_imuData.deltaTime;
-    m_previousYaw = m_imuData.yaw;
+    if (m_imuData.deltaTime <= 0 ) { return; }
 
-    m_yawPidOutput = m_pidY.compute(yawRate, m_yawMap, m_imuData.deltaTime);
+    m_yawPidOutput = m_pidY.compute(m_imuData.gyroZ, m_yawMap, m_imuData.deltaTime);
     m_pitchPidOutput = m_pidP.compute(m_imuData.pitch, m_pitchMap, m_imuData.deltaTime);
     m_rollPidOutput = m_pidR.compute(m_imuData.roll, m_rollMap, m_imuData.deltaTime);
 }
@@ -106,12 +105,11 @@ void FlightManager::writeMotors() {
     float scaledPitch = m_pitchPidOutput * PITCH_PID_SCALE;
     float scaledRoll = m_rollPidOutput * ROLL_PID_SCALE;
 
-    // Corrigir a logica das somas de Yaw, Pitch e roll para cada motor
-    float motor_FL_F = static_cast<float>(m_throttleMap) + scaledYaw - scaledPitch + scaledRoll;
-    float motor_FR_F = static_cast<float>(m_throttleMap) - scaledYaw - scaledPitch - scaledRoll;
-    float motor_BR_F = static_cast<float>(m_throttleMap) - scaledYaw + scaledPitch + scaledRoll;
-    float motor_BL_F = static_cast<float>(m_throttleMap) + scaledYaw + scaledPitch - scaledRoll;
-
+    float motor_FL_F = static_cast<float>(m_throttleMap) - scaledYaw - scaledPitch + scaledRoll;
+    float motor_FR_F = static_cast<float>(m_throttleMap) + scaledYaw - scaledPitch - scaledRoll;
+    float motor_BR_F = static_cast<float>(m_throttleMap) - scaledYaw + scaledPitch - scaledRoll;
+    float motor_BL_F = static_cast<float>(m_throttleMap) + scaledYaw + scaledPitch + scaledRoll;
+    
     uint16_t motor_FL = static_cast<uint16_t>(constrain(motor_FL_F, Pwm::IDLE, Pwm::MAX_TEST));
     uint16_t motor_FR = static_cast<uint16_t>(constrain(motor_FR_F, Pwm::IDLE, Pwm::MAX_TEST));
     uint16_t motor_BR = static_cast<uint16_t>(constrain(motor_BR_F, Pwm::IDLE, Pwm::MAX_TEST));
@@ -147,30 +145,30 @@ void FlightManager::printDebug() {
     if (millis() - m_previousDebugTime > DEBUG_PRINT_INTERVAL) {
         m_previousDebugTime = millis();
 
-        Serial.print("M_FL : ");
-        Serial.println(m_motorFL.readMicroseconds());
-        Serial.print("M_FR : ");
-        Serial.println(m_motorFR.readMicroseconds());
-        Serial.print("M_BR : ");
-        Serial.println(m_motorBR.readMicroseconds());
-        Serial.print("M_BL : ");
-        Serial.println(m_motorBL.readMicroseconds());
+        // Serial.print("M_FL : ");
+        // Serial.println(m_motorFL.readMicroseconds());
+        // Serial.print("M_FR : ");
+        // Serial.println(m_motorFR.readMicroseconds());
+        // Serial.print("M_BR : ");
+        // Serial.println(m_motorBR.readMicroseconds());
+        // Serial.print("M_BL : ");
+        // Serial.println(m_motorBL.readMicroseconds());
 
-        Serial.print("Yaw : ");
-        Serial.println(m_imuData.yaw);
-        Serial.print("Pitch : ");
-        Serial.println(m_imuData.pitch);
-        Serial.print("Roll : ");
-        Serial.println(m_imuData.roll);
+        // Serial.print("Yaw : ");
+        // Serial.println(m_imuData.yaw);
+        // Serial.print("Pitch : ");
+        // Serial.println(m_imuData.pitch);
+        // Serial.print("Roll : ");
+        // Serial.println(m_imuData.roll);
 
-        Serial.print("PID_Y : ");
-        Serial.println(m_yawPidOutput);
-        Serial.print("PID_P : ");
-        Serial.println(m_pitchPidOutput);
-        Serial.print("PID_R : ");
-        Serial.println(m_rollPidOutput);
+        // Serial.print("PID_Y : ");
+        // Serial.println(m_yawPidOutput);
+        // Serial.print("PID_P : ");
+        // Serial.println(m_pitchPidOutput);
+        // Serial.print("PID_R : ");
+        // Serial.println(m_rollPidOutput);
 
-        Serial.println();
+        // Serial.println();
     }
 }
 
