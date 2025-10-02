@@ -11,14 +11,14 @@ class GPSManager {
         TinyGPSPlus m_gps{};
         SoftwareSerial m_swSerial{};
 
-        GPSData m_data{};
+        GPSData m_gpsData{};
 
     public:
 
         GPSManager();
         void begin();
         void update();
-        GPSData getData() const;
+        GPSData getGPSData() const;
 
 };
 
