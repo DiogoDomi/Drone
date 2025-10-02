@@ -16,7 +16,9 @@ namespace {
     constexpr uint16_t RSSI_UPDATE_INTERVAL = 2000;
 }
 
-WiFiManager::WiFiManager() {}
+WiFiManager::WiFiManager() :
+    m_rssiData(Flags::WIFI_RSSI_INVALID)    
+    {}
 
 void WiFiManager::begin() {
     WiFi.mode(WiFiMode_t::WIFI_AP_STA);
@@ -39,11 +41,11 @@ void WiFiManager::update() {
     if (WiFi.status() == WL_CONNECTED) {
         if (millis() - m_lastRssiCheck > RSSI_UPDATE_INTERVAL) {
             m_lastRssiCheck = millis();
-            m_rssi = WiFi.RSSI();
+            m_rssiData = WiFi.RSSI();
         }
     } else {
-        m_rssi = Flags::WIFI_RSSI_INVALID;
+        m_rssiData = Flags::WIFI_RSSI_INVALID;
     }
 }
 
-int8_t WiFiManager::getRSSI() const { return m_rssi; }
+int8_t WiFiManager::getRSSIData() const { return m_rssiData; }

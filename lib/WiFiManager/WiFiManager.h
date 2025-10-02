@@ -6,7 +6,7 @@
 class WiFiManager {
     private:
 
-        int8_t m_rssi{};
+        int8_t m_rssiData{};
         unsigned long m_lastRssiCheck{};
 
     private:
@@ -19,7 +19,7 @@ class WiFiManager {
         WiFiManager();
         void begin();
         void update();
-        int8_t getRSSI() const;
+        int8_t getRSSIData() const;
 
 };
 
