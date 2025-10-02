@@ -82,7 +82,7 @@ void FlightManager::processStateLogic(bool stateChangeRequested, const JoystickD
 
 void FlightManager::readSensors() {
     m_imu.update();
-    m_imuData = m_imu.getData();
+    m_imuData = m_imu.getMPUData();
 }
 
 void FlightManager::mapJoystick(const JoystickData& joystickData) {
@@ -139,7 +139,7 @@ void FlightManager::update(bool stateChangeRequested,const JoystickData& joystic
     printDebug();
 }
 
-State FlightManager::getState() const { return m_currentState; }
+State FlightManager::getStateData() const { return m_currentState; }
 
 void FlightManager::printDebug() {
     if (millis() - m_previousDebugTime > DEBUG_PRINT_INTERVAL) {

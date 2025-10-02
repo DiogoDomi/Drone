@@ -55,7 +55,7 @@ class FlightManager {
         FlightManager(IMUManager& imu);
         void begin();
         void update(bool stateChangeRequested, const JoystickData& joystickData);
-        State getState() const;
+        State getStateData() const;
 
 };
 
