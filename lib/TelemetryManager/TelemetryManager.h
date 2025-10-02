@@ -1,15 +1,17 @@
-#ifndef DATA_MANAGER_H_
-#define DATA_MANAGER_H_
+#ifndef TELEMETRY_MANAGER_H_
+#define TELEMETRY_MANAGER_H_
 
 #include "WiFiManager.h"
 #include "GPSManager.h"
+#include "FlightManager.h"
 #include "TelemetryData.h"
 
-class DataManager {
+class TelemetryManager {
     private:
 
         WiFiManager& m_wifi;
         GPSManager& m_gps;
+        FlightManager& m_flight;
 
         TelemetryData m_currentTelemetry{};
         TelemetryData m_previousWebTelemetry{};
@@ -22,11 +24,11 @@ class DataManager {
 
     public:
 
-        DataManager(WiFiManager& wifi, GPSManager& gps);
+        TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightManager& flight);
         void update();
         bool shouldSendToWeb();
         bool shouldSendToBD();
-        TelemetryData getCurrentTelemetry() const;
+        TelemetryData getTelemetryData() const;
 };
 
 #endif

@@ -1,18 +1,20 @@
-#include "DataManager.h"
+#include "TelemetryManager.h"
 #include "Flags.h"
 #include <cmath>
 
-DataManager::DataManager(WiFiManager& wifi, GPSManager& gps) :
+TelemetryManager::TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightManager& flight) :
     m_wifi(wifi),
-    m_gps(gps)
+    m_gps(gps),
+    m_flight(flight)
     {}
 
-void DataManager::update() {
-    m_currentTelemetry.rssi = m_wifi.getRSSI();
-    m_currentTelemetry.gps = m_gps.getData();
+void TelemetryManager::update() {
+    m_currentTelemetry.state = m_flight.getStateData();
+    m_currentTelemetry.rssi = m_wifi.getRSSIData();
+    m_currentTelemetry.gps = m_gps.getGPSData();
 }
 
-bool DataManager::shouldSendToWeb() {
+bool TelemetryManager::shouldSendToWeb() {
     if (isTelemetryDifferent(m_previousWebTelemetry, m_currentTelemetry)) {
         m_previousWebTelemetry = m_currentTelemetry;
         return true;
@@ -20,7 +22,7 @@ bool DataManager::shouldSendToWeb() {
     return false;
 }
 
-bool DataManager::shouldSendToBD() {
+bool TelemetryManager::shouldSendToBD() {
     if (isTelemetryDifferent(m_previousDBTelemetry, m_currentTelemetry) &&
     isTelemetryValid(m_currentTelemetry)) {
         m_previousDBTelemetry = m_currentTelemetry;
@@ -29,18 +31,18 @@ bool DataManager::shouldSendToBD() {
     return false;
 }
 
-TelemetryData DataManager::getCurrentTelemetry() const {
+TelemetryData TelemetryManager::getTelemetryData() const {
     return m_currentTelemetry;
 }
 
-bool DataManager::isTelemetryValid(const TelemetryData& telemetry) const {
+bool TelemetryManager::isTelemetryValid(const TelemetryData& telemetry) const {
     if (telemetry.rssi == Flags::WIFI_RSSI_INVALID) { return false; }
     if (telemetry.gps.lat == Flags::GPS_LAT_INVALID || telemetry.gps.lon == Flags::GPS_LON_INVALID) { return false; }
     if (telemetry.gps.alt == Flags::GPS_ALT_INVALID) { return false; }
     return true;
 }
 
-bool DataManager::isTelemetryDifferent(const TelemetryData& current, const TelemetryData& previous) const {
+bool TelemetryManager::isTelemetryDifferent(const TelemetryData& current, const TelemetryData& previous) const {
     constexpr float EPSILON = 0.000001F;
 
     if (current.rssi != previous.rssi) { return true; }
