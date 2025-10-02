@@ -4,8 +4,6 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "JoystickData.h"
-#include "GPSData.h"
-#include "State.h"
 #include "TelemetryData.h"
 
 class WebManager {
@@ -18,7 +16,7 @@ class WebManager {
         AsyncWebSocket& m_socket;
 
         TelemetryData m_telemetryCache{};
-        JoystickData m_data{};
+        JoystickData m_joystickData{};
         bool m_stateChangeRequested{};
 
         StaticJsonDocument<JSON_JOYSTICK_SIZE> m_requestDoc{};
@@ -37,10 +35,10 @@ class WebManager {
         WebManager(AsyncWebServer& server, AsyncWebSocket& socket);
         void begin();
         void update();
-        void cacheTelemetry(const GPSData& gps, int8_t rssi, State state);
-        void sendTelemetry(const GPSData& gps, int8_t rssi, State state) const;
+        void cacheTelemetry(const TelemetryData& telemetry);
+        void sendTelemetry(const TelemetryData& telemetry) const;
         bool hasStateChangeRequest();
-        JoystickData getData() const;
+        JoystickData getJoystickData() const;
 
 };
 

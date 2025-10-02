@@ -79,10 +79,10 @@ void WebManager::onConnectSendTelemetry(AsyncWebSocketClient* client) const {
 
 void WebManager::onConnectSendJoystickData(AsyncWebSocketClient* client) const {
     StaticJsonDocument<JSON_JOYSTICK_SIZE> doc{};
-    doc["lx"] = m_data.lx;
-    doc["ly"] = m_data.ly;
-    doc["rx"] = m_data.rx;
-    doc["ry"] = m_data.ry;
+    doc["lx"] = m_joystickData.lx;
+    doc["ly"] = m_joystickData.ly;
+    doc["rx"] = m_joystickData.rx;
+    doc["ry"] = m_joystickData.ry;
 
     char output[JSON_JOYSTICK_SIZE]{};
     serializeJson(doc, output);
@@ -101,10 +101,10 @@ void WebManager::handleWebSocketMessage(void* arg, uint8_t* data, size_t len) {
         if (docHasError || m_requestDoc.isNull()) { return; }
 
         if (!m_requestDoc["state"].isNull()) { m_stateChangeRequested = true; }
-        if (!m_requestDoc["lx"].isNull()) { m_data.lx = m_requestDoc["lx"]; }
-        if (!m_requestDoc["ly"].isNull()) { m_data.ly = m_requestDoc["ly"]; }
-        if (!m_requestDoc["rx"].isNull()) { m_data.rx = m_requestDoc["rx"]; }
-        if (!m_requestDoc["ry"].isNull()) { m_data.ry = m_requestDoc["ry"]; }
+        if (!m_requestDoc["lx"].isNull()) { m_joystickData.lx = m_requestDoc["lx"]; }
+        if (!m_requestDoc["ly"].isNull()) { m_joystickData.ly = m_requestDoc["ly"]; }
+        if (!m_requestDoc["rx"].isNull()) { m_joystickData.rx = m_requestDoc["rx"]; }
+        if (!m_requestDoc["ry"].isNull()) { m_joystickData.ry = m_requestDoc["ry"]; }
     }
 }
 
@@ -112,19 +112,19 @@ void WebManager::update() {
     m_socket.cleanupClients();
 }
 
-void WebManager::cacheTelemetry(const GPSData& gps, int8_t rssi, State state) {
-    m_telemetryCache.state = state;
-    m_telemetryCache.rssi = rssi;
-    m_telemetryCache.gps = gps;
+void WebManager::cacheTelemetry(const TelemetryData& telemetry) {
+    m_telemetryCache.state = telemetry.state;
+    m_telemetryCache.rssi = telemetry.rssi;
+    m_telemetryCache.gps = telemetry.gps;
 }
 
-void WebManager::sendTelemetry(const GPSData& gps, int8_t rssi, State state) const {
+void WebManager::sendTelemetry(const TelemetryData& telemetry) const {
     StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
-    doc["state"] = static_cast<uint8_t>(state);
-    doc["rssi"] = rssi;
-    doc["lat"] = gps.lat;
-    doc["lon"] = gps.lon;
-    doc["alt"] = gps.alt;
+    doc["state"] = static_cast<uint8_t>(telemetry.state);
+    doc["rssi"] = telemetry.rssi;
+    doc["lat"] = telemetry.gps.lat;
+    doc["lon"] = telemetry.gps.lon;
+    doc["alt"] = telemetry.gps.alt;
 
     char output[JSON_TELEMETRY_SIZE]{};
     serializeJson(doc, output);
@@ -139,4 +139,4 @@ bool WebManager::hasStateChangeRequest() {
     return false;
 }
 
-JoystickData WebManager::getData() const { return m_data; }
+JoystickData WebManager::getJoystickData() const { return m_joystickData; }
