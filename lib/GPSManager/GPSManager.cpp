@@ -18,21 +18,20 @@ void GPSManager::begin() {
 
 void GPSManager::update() { 
     while (m_swSerial.available() > 0) {
-        if (m_gps.encode(m_swSerial.read())) {
-            if (m_gps.location.isValid() && m_gps.location.age() < GPS_TIMEOUT_MS) {
-                m_gpsData.lat = m_gps.location.lat();
-                m_gpsData.lon = m_gps.location.lng();
-            } else {
-                m_gpsData.lat = Flags::GPS_LAT_INVALID;
-                m_gpsData.lon = Flags::GPS_LON_INVALID;
-            }
+        m_gps.encode(m_swSerial.read());
+    }
+    if (m_gps.location.isValid() && m_gps.location.age() < GPS_TIMEOUT_MS) {
+        m_gpsData.lat = m_gps.location.lat();
+        m_gpsData.lon = m_gps.location.lng();
+    } else {
+        m_gpsData.lat = Flags::GPS_LAT_INVALID;
+        m_gpsData.lon = Flags::GPS_LON_INVALID;
+    }
 
-            if (m_gps.altitude.isValid() && m_gps.altitude.age() < GPS_TIMEOUT_MS) {
-                m_gpsData.alt = m_gps.altitude.meters();
-            } else {
-                m_gpsData.alt = Flags::GPS_ALT_INVALID;
-            }
-        }
+    if (m_gps.altitude.isValid() && m_gps.altitude.age() < GPS_TIMEOUT_MS) {
+        m_gpsData.alt = m_gps.altitude.meters();
+    } else {
+        m_gpsData.alt = Flags::GPS_ALT_INVALID;
     }
 }
 
