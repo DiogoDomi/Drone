@@ -3,7 +3,6 @@
 
 #include "WiFiManager.h"
 #include "GPSManager.h"
-#include "FlightManager.h"
 #include "TelemetryData.h"
 
 class TelemetryManager {
@@ -11,7 +10,6 @@ class TelemetryManager {
 
         WiFiManager& m_wifi;
         GPSManager& m_gps;
-        FlightManager& m_flight;
 
         TelemetryData m_currentTelemetry{};
         TelemetryData m_previousWebTelemetry{};
@@ -24,7 +22,7 @@ class TelemetryManager {
 
     public:
 
-        TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightManager& flight);
+        TelemetryManager(WiFiManager& wifi, GPSManager& gps);
         void update();
         bool shouldSendToWeb();
         bool shouldSendToBD();

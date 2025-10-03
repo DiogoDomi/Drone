@@ -2,14 +2,12 @@
 #include "Flags.h"
 #include <cmath>
 
-TelemetryManager::TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightManager& flight) :
+TelemetryManager::TelemetryManager(WiFiManager& wifi, GPSManager& gps) :
     m_wifi(wifi),
-    m_gps(gps),
-    m_flight(flight)
+    m_gps(gps)
     {}
 
 void TelemetryManager::update() {
-    m_currentTelemetry.state = m_flight.getStateData();
     m_currentTelemetry.rssi = m_wifi.getRSSIData();
     m_currentTelemetry.gps = m_gps.getGPSData();
 }
