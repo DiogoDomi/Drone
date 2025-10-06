@@ -88,15 +88,15 @@ void FlightManager::readSensors() {
 void FlightManager::mapJoystick(const JoystickData& joystickData) {
     m_throttleMap = map(joystickData.ly, -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, Pwm::IDLE, Pwm::MAX_TEST);
     m_yawMap = fmap(joystickData.lx, -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, -Y_RATE, Y_RATE);
-    m_pitchMap = fmap(joystickData.ry, -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, PR_ANGLE, -PR_ANGLE);
+    m_pitchMap = fmap(joystickData.ry, -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, -PR_ANGLE, PR_ANGLE);
     m_rollMap = fmap(joystickData.rx, -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, -PR_ANGLE, PR_ANGLE);
 }
 
 void FlightManager::calculatePID() {
     if (m_imuData.deltaTime <= 0 ) { return; }
 
-    m_yawPidOutput = m_pidY.compute(m_imuData.gyroZ, m_yawMap, m_imuData.deltaTime);
-    m_pitchPidOutput = m_pidP.compute(m_imuData.pitch, m_pitchMap, m_imuData.deltaTime);
+    m_yawPidOutput = m_pidY.compute(-m_imuData.gyroZ, m_yawMap, m_imuData.deltaTime);
+    m_pitchPidOutput = m_pidP.compute(-m_imuData.pitch, m_pitchMap, m_imuData.deltaTime);
     m_rollPidOutput = m_pidR.compute(m_imuData.roll, m_rollMap, m_imuData.deltaTime);
 }
 
