@@ -124,4 +124,9 @@ void IMUManager::update() {
     }
 }
 
-IMUData IMUManager::getMPUData() const { return m_mpuData; }
+IMUData IMUManager::getMPUData() const { 
+    noInterrupts();
+    IMUData tempData = m_mpuData;
+    interrupts();
+    return tempData;
+}
