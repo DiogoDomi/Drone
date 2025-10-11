@@ -121,6 +121,9 @@ void IMUManager::update() {
         m_mpuData.pitch = rawReading.pitch - m_swOffsets.pitch;
         m_mpuData.roll = rawReading.roll - m_swOffsets.roll;
         m_mpuData.gyroZ = rawReading.gyroZ - m_swOffsets.gyroZ;
+
+        m_mpuData.pitch *= -1.00;
+        m_mpuData.gyroZ *= -1.00;
     }
 }
 
