@@ -95,8 +95,8 @@ void FlightManager::mapJoystick(const JoystickData& joystickData) {
 void FlightManager::calculatePID() {
     if (m_imuData.deltaTime <= 0 ) { return; }
 
-    m_yawPidOutput = m_pidY.compute(-m_imuData.gyroZ, m_yawMap, m_imuData.deltaTime);
-    m_pitchPidOutput = m_pidP.compute(-m_imuData.pitch, m_pitchMap, m_imuData.deltaTime);
+    m_yawPidOutput = m_pidY.compute(m_imuData.gyroZ, m_yawMap, m_imuData.deltaTime);
+    m_pitchPidOutput = m_pidP.compute(m_imuData.pitch, m_pitchMap, m_imuData.deltaTime);
     m_rollPidOutput = m_pidR.compute(m_imuData.roll, m_rollMap, m_imuData.deltaTime);
 }
 
