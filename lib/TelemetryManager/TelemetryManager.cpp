@@ -10,6 +10,8 @@ TelemetryManager::TelemetryManager(WiFiManager& wifi, GPSManager& gps) :
 void TelemetryManager::update() {
     m_currentTelemetry.rssi = m_wifi.getRSSIData();
     m_currentTelemetry.gps = m_gps.getGPSData();
+
+    m_currentTelemetry.isValid = isTelemetryValid(m_currentTelemetry);
 }
 
 bool TelemetryManager::shouldSendToWeb() {
