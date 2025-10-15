@@ -20,7 +20,7 @@ class WebManager {
         TelemetryData m_cachedTelemetry{};
 
         JoystickData m_joystickData{};
-        bool m_stateChangeRequested{};
+        volatile bool m_stateChangeRequested{};
 
         StaticJsonDocument<JSON_JOYSTICK_SIZE> m_requestDoc{};
 

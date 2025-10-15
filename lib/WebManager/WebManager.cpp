@@ -131,11 +131,18 @@ void WebManager::sendTelemetry(const TelemetryData& telemetry, State state) cons
 }
 
 bool WebManager::hasStateChangeRequest() {
-    if (m_stateChangeRequested) {
+    noInterrupts();
+    bool requested = m_stateChangeRequested;
+    if (requested) {
         m_stateChangeRequested = false;
-        return true;
     }
-    return false;
+    interrupts();
+    return requested;
 }
 
-JoystickData WebManager::getJoystickData() const { return m_joystickData; }
+JoystickData WebManager::getJoystickData() const { 
+    noInterrupts();
+    JoystickData tempData = m_joystickData;
+    interrupts();
+    return tempData;
+}
