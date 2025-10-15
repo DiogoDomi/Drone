@@ -2,6 +2,7 @@
 #define WIFI_MANAGER_H_
 
 #include <cstdint>
+#include <ESP8266WiFi.h>
 
 class WiFiManager {
     private:
