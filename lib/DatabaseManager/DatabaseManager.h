@@ -3,7 +3,6 @@
 
 #include <ESP8266HTTPClient.h>
 #include <WiFiClientSecure.h>
-#include <ArduinoJson.h>
 #include "TelemetryData.h"
 #include <time.h>
 
@@ -16,10 +15,8 @@ class DatabaseManager {
     public:
 
         DatabaseManager();
-
         void begin();
-
-        bool sendDBData(const TelemetryData& telemetry, time_t timestamp);
+        bool sendDBData(const TelemetryData& telemetry, time_t timeStamp);
 
 };
 

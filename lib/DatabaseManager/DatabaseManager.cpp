@@ -1,4 +1,5 @@
 #include "DatabaseManager.h"
+#include <ArduinoJson.h>
 
 namespace {
     const char* FIREBASE_URL = "https://banco-de-dados---drone-default-rtdb.firebaseio.com/readings.json";
@@ -11,11 +12,13 @@ void DatabaseManager::begin() {
     m_client.setInsecure();
 }
 
-bool DatabaseManager::sendDBData(const TelemetryData& telemetry, time_t timestamp) {
+bool DatabaseManager::sendDBData(const TelemetryData& telemetry, time_t timeStamp) {
+    if (!m_http.begin(m_client, FIREBASE_URL)) { return false; }
+
     StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
 
     char formattedTime[25];
-    strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+    strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", localtime(&timeStamp));
 
     doc["datetime"] = formattedTime;
     doc["rssi"] = telemetry.rssi;
@@ -25,10 +28,6 @@ bool DatabaseManager::sendDBData(const TelemetryData& telemetry, time_t timestam
 
     char output[JSON_TELEMETRY_SIZE]{};
     serializeJson(doc, output);
-
-    if (!m_http.begin(m_client, FIREBASE_URL)) {
-        return false;
-    }
 
     m_http.addHeader("Content-Type", "application/json");
     uint8_t httpCode = m_http.POST(output);
