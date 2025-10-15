@@ -3,7 +3,6 @@
 
 namespace {
     const char* FIREBASE_URL = "https://banco-de-dados---drone-default-rtdb.firebaseio.com/readings.json";
-    static const uint8_t JSON_TELEMETRY_SIZE = 255;
 }
 
 DatabaseManager::DatabaseManager() {}

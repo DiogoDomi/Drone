@@ -7,6 +7,9 @@
 #include <time.h>
 
 class DatabaseManager {
+    private: 
+        static const uint8_t JSON_TELEMETRY_SIZE = 255;
+
     private:
 
     WiFiClientSecure m_client{};
