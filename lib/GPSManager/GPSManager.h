@@ -18,7 +18,7 @@ class GPSManager {
         GPSManager();
         void begin();
         void update();
-        GPSData getGPSData() const;
+        const GPSData& getGPSData() const;
 
 };
 
