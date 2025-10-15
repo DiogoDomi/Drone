@@ -6,21 +6,15 @@ namespace {
 }
 
 SystemManager::SystemManager() :   
-    m_wifi(),
-
     m_server(80),
     m_socket("/ws"),
+    m_wifi(),
     m_web(m_server, m_socket),
-
     m_imu(),
     m_flight(m_imu),
-
     m_gps(),
-
     m_telemetry(m_wifi, m_gps),
-
     m_database(),
-
     m_time()
     {}
 
