@@ -93,8 +93,11 @@ void WebManager::handleWebSocketMessage(void* arg, uint8_t* data, size_t len) {
     AwsFrameInfo* info = static_cast<AwsFrameInfo*>(arg);
 
     if (info->final && info->index == 0 && info->len == len && info->opcode == AwsFrameType::WS_TEXT) {
-        data[len] = 0;
-        char* msg = (char*)data;
+        char msg[len + 1]{};
+
+        memcpy(msg, data, len);
+
+        msg[len] = '\0';
 
         DeserializationError docHasError =  deserializeJson(m_requestDoc, msg);
 
