@@ -19,6 +19,7 @@ bool DatabaseManager::sendDBData(const TelemetryData& telemetry, time_t timeStam
     char formattedTime[25];
     strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", localtime(&timeStamp));
 
+    doc["isValid"] = telemetry.isValid;
     doc["datetime"] = formattedTime;
     doc["rssi"] = telemetry.rssi;
     doc["lat"] = telemetry.gps.lat;
