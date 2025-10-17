@@ -25,9 +25,9 @@ namespace {
 FlightManager::FlightManager(IMUManager& imu) :
     m_imu(imu),
 
-    m_pidY(5.0F, 0.5F, 0.05F),
-    m_pidP(1.20F, 0.0F, 0.23F),
-    m_pidR(1.20F, 0.0F, 0.23F)
+    m_pidY(2.0F, 0.5F, 0.0F),
+    m_pidP(1.2F, 0.15F, 0.15F),
+    m_pidR(1.0F, 0.10F, 0.15F)
     {}
 
 void FlightManager::begin() {
@@ -163,14 +163,16 @@ State FlightManager::getStateData() const { return m_currentState; }
 //         Serial.print(" | PID_R : ");
 //         Serial.println(m_rollPidOutput);
 
-//         Serial.print("GyroZ : ");
+//         Serial.print("Yaw : ");
+//         Serial.print(m_imuData.yaw);
+//         Serial.print(" | GyroZ : ");
 //         Serial.print(m_imuData.gyroZ);
 //         Serial.print(" | YawMap: ");
 //         Serial.print(m_yawMap);
 //         Serial.print(" | PID_Y : ");
 //         Serial.println(m_yawPidOutput);
 
-//         Serial.println("--------------------");
+//         Serial.println("---------------------------------------------");
 //     }
 // }
 
