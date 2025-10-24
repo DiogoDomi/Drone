@@ -37,10 +37,10 @@ void FlightManager::begin() {
 }
 
 void FlightManager::setupMotors() {
-    m_motorFL.attach(Pins::ESC::MOTOR_FL_PIN);
-    m_motorFR.attach(Pins::ESC::MOTOR_FR_PIN);
-    m_motorBR.attach(Pins::ESC::MOTOR_BR_PIN);
-    m_motorBL.attach(Pins::ESC::MOTOR_BL_PIN);
+    m_motorFL.attach(Pins::ESC::MOTOR_FL_PIN, Pwm::MIN, Pwm::MAX);
+    m_motorFR.attach(Pins::ESC::MOTOR_FR_PIN, Pwm::MIN, Pwm::MAX);
+    m_motorBR.attach(Pins::ESC::MOTOR_BR_PIN, Pwm::MIN, Pwm::MAX);
+    m_motorBL.attach(Pins::ESC::MOTOR_BL_PIN, Pwm::MIN, Pwm::MAX);
 }
 
 void FlightManager::setMotorState() {
@@ -105,10 +105,10 @@ void FlightManager::writeMotors() {
     float motor_BR_F = static_cast<float>(m_throttleMap) - scaledYaw + scaledPitch - scaledRoll;
     float motor_BL_F = static_cast<float>(m_throttleMap) + scaledYaw + scaledPitch + scaledRoll;
     
-    uint16_t motor_FL = static_cast<uint16_t>(constrain(motor_FL_F, Pwm::IDLE, Pwm::MAX_TEST));
-    uint16_t motor_FR = static_cast<uint16_t>(constrain(motor_FR_F, Pwm::IDLE, Pwm::MAX_TEST));
-    uint16_t motor_BR = static_cast<uint16_t>(constrain(motor_BR_F, Pwm::IDLE, Pwm::MAX_TEST));
-    uint16_t motor_BL = static_cast<uint16_t>(constrain(motor_BL_F, Pwm::IDLE, Pwm::MAX_TEST));
+    uint16_t motor_FL = static_cast<uint16_t>(constrain(motor_FL_F, Pwm::IDLE, Pwm::MAX));
+    uint16_t motor_FR = static_cast<uint16_t>(constrain(motor_FR_F, Pwm::IDLE, Pwm::MAX));
+    uint16_t motor_BR = static_cast<uint16_t>(constrain(motor_BR_F, Pwm::IDLE, Pwm::MAX));
+    uint16_t motor_BL = static_cast<uint16_t>(constrain(motor_BL_F, Pwm::IDLE, Pwm::MAX));
 
     m_motorFL.writeMicroseconds(motor_FL);
     m_motorFR.writeMicroseconds(motor_FR);
@@ -176,22 +176,42 @@ State FlightManager::getStateData() const { return m_currentState; }
 //     }
 // }
 
-// void FlightManager::calibrateESCs() {
-//     setupMotors();
-//     delay(1000);
+void FlightManager::calibrateESCs() {
+    Serial.begin(115200);
+    Serial.println();
+    delay(1000);
 
-//     m_motorFL.writeMicroseconds(Pwm::MAX);
-//     m_motorFR.writeMicroseconds(Pwm::MAX);
-//     m_motorBR.writeMicroseconds(Pwm::MAX);
-//     m_motorBL.writeMicroseconds(Pwm::MAX);
-//     delay(3000);
+    Serial.println("=============================================");
+    Serial.println("INICIANDO CALIBRACAO DE ESC");
+    Serial.println("VERIFIQUE: HÉLICES REMOVIDAS?");
+    Serial.println("VERIFIQUE: BATERIA LIPO DESCONECTADA?");
+    Serial.println("=============================================");
+    
+    setupMotors();
+    
+    Serial.println("Enviando sinal MÁXIMO (Pwm::MAX)...");
+    m_motorFL.writeMicroseconds(Pwm::MAX);
+    m_motorFR.writeMicroseconds(Pwm::MAX);
+    m_motorBR.writeMicroseconds(Pwm::MAX);
+    m_motorBL.writeMicroseconds(Pwm::MAX);
 
-//     m_motorFL.writeMicroseconds(Pwm::MIN);
-//     m_motorFR.writeMicroseconds(Pwm::MIN);
-//     m_motorBR.writeMicroseconds(Pwm::MIN);
-//     m_motorBL.writeMicroseconds(Pwm::MIN);
-//     delay(3000);
-// }
+    Serial.println("\n*********************************************");
+    Serial.println("CONECTE A BATERIA LIPO AGORA!");
+    Serial.println("Aguarde os bipes de 'modo de calibração'...");
+    Serial.println("*********************************************");
+    
+    delay(8000);
+
+    Serial.println("\nEnviando sinal MÍNIMO (Pwm::MIN)...");
+    m_motorFL.writeMicroseconds(Pwm::MIN);
+    m_motorFR.writeMicroseconds(Pwm::MIN);
+    m_motorBR.writeMicroseconds(Pwm::MIN);
+    m_motorBL.writeMicroseconds(Pwm::MIN);
+
+    Serial.println("Aguarde os bipes de 'confirmação' final.");
+    Serial.println("Calibração concluída.");
+    Serial.println("Desconecte a bateria LIPO.");
+}
 
 float FlightManager::fmap(float x, float in_min, float in_max, float out_min, float out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
