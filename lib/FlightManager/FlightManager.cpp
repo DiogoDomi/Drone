@@ -102,10 +102,10 @@ void FlightManager::writeMotors() {
     float scaledPitch = m_pitchPidOutput * PITCH_PID_SCALE;
     float scaledRoll = m_rollPidOutput * ROLL_PID_SCALE;
 
-    float motor_FL_F = static_cast<float>(m_throttleMap) + scaledPitch - scaledRoll + scaledYaw;
-    float motor_FR_F = static_cast<float>(m_throttleMap) + scaledPitch + scaledRoll - scaledYaw;
-    float motor_BR_F = (static_cast<float>(m_throttleMap) * BACK_CORRECTION) - scaledPitch + scaledRoll + scaledYaw;
-    float motor_BL_F = (static_cast<float>(m_throttleMap) * BACK_CORRECTION) - scaledPitch - scaledRoll - scaledYaw;
+    float motor_FL_F = static_cast<float>(m_throttleMap) - scaledPitch + scaledRoll - scaledYaw;
+    float motor_FR_F = static_cast<float>(m_throttleMap) - scaledPitch - scaledRoll + scaledYaw;
+    float motor_BR_F = (static_cast<float>(m_throttleMap) * BACK_CORRECTION) + scaledPitch - scaledRoll - scaledYaw;
+    float motor_BL_F = (static_cast<float>(m_throttleMap) * BACK_CORRECTION) + scaledPitch + scaledRoll + scaledYaw;
     
     uint16_t motor_FL = static_cast<uint16_t>(constrain(motor_FL_F, Pwm::IDLE, Pwm::MAX));
     uint16_t motor_FR = static_cast<uint16_t>(constrain(motor_FR_F, Pwm::IDLE, Pwm::MAX));
