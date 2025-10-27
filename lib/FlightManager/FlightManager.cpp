@@ -21,7 +21,10 @@ namespace {
 
     constexpr uint8_t DEBUG_PRINT_INTERVAL = 1;
 
-    constexpr float BACK_CORRECTION = 0.95;
+    constexpr float FL_CORRECTION = 0.98F;
+    constexpr float FR_CORRECTION = 1.00F;
+    constexpr float BR_CORRECTION = 0.90F;
+    constexpr float BL_CORRECTION = 0.95F;
 }
 
 FlightManager::FlightManager(IMUManager& imu) :
@@ -102,10 +105,10 @@ void FlightManager::writeMotors() {
     float scaledPitch = m_pitchPidOutput * PITCH_PID_SCALE;
     float scaledRoll = m_rollPidOutput * ROLL_PID_SCALE;
 
-    float motor_FL_F = static_cast<float>(m_throttleMap) - scaledPitch + scaledRoll - scaledYaw;
-    float motor_FR_F = static_cast<float>(m_throttleMap) - scaledPitch - scaledRoll + scaledYaw;
-    float motor_BR_F = (static_cast<float>(m_throttleMap) * BACK_CORRECTION) + scaledPitch - scaledRoll - scaledYaw;
-    float motor_BL_F = (static_cast<float>(m_throttleMap) * BACK_CORRECTION) + scaledPitch + scaledRoll + scaledYaw;
+    float motor_FL_F = (static_cast<float>(m_throttleMap) * FL_CORRECTION) - scaledPitch + scaledRoll - scaledYaw;
+    float motor_FR_F = (static_cast<float>(m_throttleMap) * FR_CORRECTION) - scaledPitch - scaledRoll + scaledYaw;
+    float motor_BR_F = (static_cast<float>(m_throttleMap) * BR_CORRECTION) + scaledPitch - scaledRoll - scaledYaw;
+    float motor_BL_F = (static_cast<float>(m_throttleMap) * BL_CORRECTION) + scaledPitch + scaledRoll + scaledYaw;
     
     uint16_t motor_FL = static_cast<uint16_t>(constrain(motor_FL_F, Pwm::IDLE, Pwm::MAX));
     uint16_t motor_FR = static_cast<uint16_t>(constrain(motor_FR_F, Pwm::IDLE, Pwm::MAX));
