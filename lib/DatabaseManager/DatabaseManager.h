@@ -8,7 +8,7 @@
 
 class DatabaseManager {
     private: 
-        static const uint8_t JSON_TELEMETRY_SIZE = 255;
+        static const uint8_t JSON_TELEMETRY_SIZE = 254;
 
     private:
 
