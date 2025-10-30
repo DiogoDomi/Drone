@@ -21,7 +21,9 @@ namespace {
 
     constexpr uint8_t DEBUG_PRINT_INTERVAL = 1;
 
-    constexpr float FL_CORRECTION = 0.95F;
+    constexpr float ANGLE_CHANGE_PER_LOOP = 20.0F;
+
+    constexpr float FL_CORRECTION = 0.94F;
     constexpr float FR_CORRECTION = 1.00F;
     constexpr float BR_CORRECTION = 0.90F;
     constexpr float BL_CORRECTION = 0.95F;
