@@ -12,7 +12,7 @@ namespace {
     constexpr uint8_t ABS_JOYSTICK_RANGE = 100;
     constexpr uint8_t JOYSTICK_DEADZONE = 3;
 
-    constexpr float PR_ANGLE = 20.0F;
+    constexpr float PR_ANGLE = 10.0F;
     constexpr float Y_RATE = 200.0F;
 
     constexpr float YAW_PID_SCALE = 1.0F;
