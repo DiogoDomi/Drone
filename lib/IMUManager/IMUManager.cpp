@@ -10,9 +10,6 @@ namespace {
 
     constexpr uint8_t HARDWARE_LOOPS = 10;
     constexpr uint16_t SOFTWARE_LOOPS = 200;
-
-    constexpr float DMP_OUTPUT_RATE_HZ = 100.0F;
-    constexpr float DMP_DELTA_TIME_SEC = 1.0F / DMP_OUTPUT_RATE_HZ;
 }
 
 void IRAM_ATTR imu_isr_wrapper() {
@@ -115,8 +112,6 @@ void IMUManager::update() {
 
     IMUData rawReading{};
     if (readDMPData(rawReading)) {
-        m_mpuData.deltaTime = DMP_DELTA_TIME_SEC;
-
         m_mpuData.yaw = rawReading.yaw - m_swOffsets.yaw;
         m_mpuData.pitch = rawReading.pitch - m_swOffsets.pitch;
         m_mpuData.roll = rawReading.roll - m_swOffsets.roll;
