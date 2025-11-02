@@ -8,9 +8,6 @@
 #include "State.h"
 
 class WebManager {
-        static const uint8_t JSON_JOYSTICK_SIZE = 140;
-        static const uint8_t JSON_TELEMETRY_SIZE = 160;
-
     private:
 
         AsyncWebServer& m_server;
@@ -22,7 +19,7 @@ class WebManager {
         JoystickData m_joystickData{};
         volatile bool m_stateChangeRequested{};
 
-        StaticJsonDocument<JSON_JOYSTICK_SIZE> m_requestDoc{};
+        JsonDocument m_requestDoc{};
 
     private:
 

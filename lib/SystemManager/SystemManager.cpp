@@ -55,13 +55,13 @@ void SystemManager::loop() {
         m_web.sendTelemetry(telemetryData, state);
     }
 
-    if ((millis() - m_lastDBSendTime >= DB_SEND_INTERVAL) || m_telemetry.shouldSendToBD()) {
-        if (m_wifi.getWiFiStatus() == WL_CONNECTED) {
-            TelemetryData currentTelemetry = m_telemetry.getTelemetryData();
-            time_t timeStamp = m_time.getTimeStamp();
-            if (m_database.sendDBData(currentTelemetry, timeStamp)) {
-                m_lastDBSendTime = millis();
-            }
-        }
-    }
+    // if ((millis() - m_lastDBSendTime >= DB_SEND_INTERVAL) || m_telemetry.shouldSendToBD()) {
+    //     if (m_wifi.getWiFiStatus() == WL_CONNECTED) {
+    //         TelemetryData currentTelemetry = m_telemetry.getTelemetryData();
+    //         time_t timeStamp = m_time.getTimeStamp();
+    //         if (m_database.sendDBData(currentTelemetry, timeStamp)) {
+    //             m_lastDBSendTime = millis();
+    //         }
+    //     }
+    // }
 }

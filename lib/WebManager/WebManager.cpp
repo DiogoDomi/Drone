@@ -65,26 +65,26 @@ void WebManager::onEventHandler(AsyncWebSocket* socket, AsyncWebSocketClient* cl
 }
 
 void WebManager::onConnectSendTelemetry(AsyncWebSocketClient* client) const {
-    StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
+    JsonDocument doc{};
     doc["state"] = static_cast<uint8_t>(m_cachedState);
     doc["rssi"] = m_cachedTelemetry.rssi;
     doc["lat"] = m_cachedTelemetry.gps.lat;
     doc["lon"] = m_cachedTelemetry.gps.lon;
     doc["alt"] = m_cachedTelemetry.gps.alt;
 
-    char output[JSON_TELEMETRY_SIZE]{};
+    char output[UINT8_MAX]{};
     serializeJson(doc, output);
     client->text(output);
 }
 
 void WebManager::onConnectSendJoystickData(AsyncWebSocketClient* client) const {
-    StaticJsonDocument<JSON_JOYSTICK_SIZE> doc{};
+    JsonDocument doc{};
     doc["lx"] = m_joystickData.lx;
     doc["ly"] = m_joystickData.ly;
     doc["rx"] = m_joystickData.rx;
     doc["ry"] = m_joystickData.ry;
 
-    char output[JSON_JOYSTICK_SIZE]{};
+    char output[UINT8_MAX]{};
     serializeJson(doc, output);
     client->text(output);
 }
@@ -121,14 +121,14 @@ void WebManager::cacheTelemetry(const TelemetryData& telemetry, State state) {
 }
 
 void WebManager::sendTelemetry(const TelemetryData& telemetry, State state) const {
-    StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
+    JsonDocument doc{};
     doc["state"] = static_cast<uint8_t>(state);
     doc["rssi"] = telemetry.rssi;
     doc["lat"] = telemetry.gps.lat;
     doc["lon"] = telemetry.gps.lon;
     doc["alt"] = telemetry.gps.alt;
 
-    char output[JSON_TELEMETRY_SIZE]{};
+    char output[UINT8_MAX]{};
     serializeJson(doc, output);
     m_socket.textAll(output);
 }
