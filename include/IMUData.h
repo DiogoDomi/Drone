@@ -2,8 +2,7 @@
 #define IMU_DATA_H_
 
 struct IMUData {
-    float deltaTime{}, pitch{}, roll{}, yaw{};
-    float gyroZ{};
+    float pitch{}, roll{}, yaw{}, gyroZ{};
 };
 
 #endif
