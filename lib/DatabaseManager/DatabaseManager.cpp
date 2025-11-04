@@ -11,22 +11,19 @@ void DatabaseManager::begin() {
     m_client.setInsecure();
 }
 
-bool DatabaseManager::sendDBData(const TelemetryData& telemetry, time_t timeStamp) {
+bool DatabaseManager::sendDBData(const TelemetryData& telemetry, const time_t timestamp) {
     if (!m_http.begin(m_client, FIREBASE_URL)) { return false; }
 
-    JsonDocument doc{};
+    StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
 
-    char formattedTime[25];
-    strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", localtime(&timeStamp));
-
-    doc["isValid"] = telemetry.isValid;
-    doc["datetime"] = formattedTime;
+    doc["valid"] = telemetry.isValid;
+    doc["ts"] = timestamp;
     doc["rssi"] = telemetry.rssi;
     doc["lat"] = telemetry.gps.lat;
     doc["lon"] = telemetry.gps.lon;
     doc["alt"] = telemetry.gps.alt;
 
-    char output[UINT8_MAX]{};
+    char output[JSON_TELEMETRY_SIZE]{};
     serializeJson(doc, output);
 
     m_http.addHeader("Content-Type", "application/json");
