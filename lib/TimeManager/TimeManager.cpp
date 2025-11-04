@@ -12,4 +12,4 @@ void TimeManager::update() {
     m_timestamp = time(nullptr);
 }
 
-time_t TimeManager::getTimeStamp() const { return m_timestamp; }
+time_t TimeManager::getTimestamp() const { return m_timestamp; }

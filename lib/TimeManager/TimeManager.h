@@ -14,7 +14,7 @@ class TimeManager {
 
         void begin();
         void update();
-        time_t getTimeStamp() const;
+        time_t getTimestamp() const;
 
 };
 
