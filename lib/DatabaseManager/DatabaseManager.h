@@ -4,10 +4,9 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include "TelemetryData.h"
-#include <time.h>
 
 class DatabaseManager {
-    static const uint8_t JSON_TELEMETRY_SIZE = 160;
+    static const uint8_t JSON_TELEMETRY_SIZE = 180;
 
     private:
 
@@ -18,7 +17,7 @@ class DatabaseManager {
 
         DatabaseManager();
         void begin();
-        bool sendDBData(const TelemetryData& telemetry, const time_t timestamp);
+        void sendDBData(const TelemetryData& telemetry);
 
 };
 
