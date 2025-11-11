@@ -7,7 +7,7 @@
 #include "TelemetryData.h"
 
 class WebManager {
-    static const uint8_t JSON_JOYSTICK_SIZE = 140;
+    static const uint8_t JSON_JOYSTICK_SIZE = 120;
     static const uint8_t JSON_TELEMETRY_SIZE = 160;
 
     private:
@@ -21,6 +21,8 @@ class WebManager {
         volatile bool m_stateChangeRequested{};
 
         StaticJsonDocument<JSON_JOYSTICK_SIZE> m_requestDoc{};
+        StaticJsonDocument<JSON_TELEMETRY_SIZE> m_serializeDoc{};
+        char m_outputBuffer[JSON_TELEMETRY_SIZE]{};
 
     private:
 
@@ -28,8 +30,8 @@ class WebManager {
         void setupSocket();
         void onEventHandler(AsyncWebSocket* socket, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len);
         void handleWebSocketMessage(void* arg, uint8_t* data, size_t len);
-        void onConnectSendTelemetry(AsyncWebSocketClient* client) const;
-        void onConnectSendJoystickData(AsyncWebSocketClient* client) const;
+        void onConnectSendTelemetry(AsyncWebSocketClient* client);
+        void onConnectSendJoystickData(AsyncWebSocketClient* client);
 
     public:
 
@@ -37,7 +39,7 @@ class WebManager {
         void begin();
         void update();
         void cacheTelemetry(const TelemetryData& telemetry);
-        void sendTelemetry(const TelemetryData& telemetry) const;
+        void sendTelemetry(const TelemetryData& telemetry);
         bool hasStateChangeRequest();
         JoystickData getJoystickData() const;
 
