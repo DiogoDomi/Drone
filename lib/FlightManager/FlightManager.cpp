@@ -23,10 +23,12 @@ namespace {
 
     constexpr float MICROS_TO_SEC_DIVIDER = 1000000.0F;
 
-    constexpr float FL_CORRECTION = 0.94F;
-    constexpr float FR_CORRECTION = 1.00F;
-    constexpr float BR_CORRECTION = 0.90F;
-    constexpr float BL_CORRECTION = 0.95F;
+    // strongest motor pulls 150g with 1218us
+
+    constexpr float FL_CORRECTION = 1229.0F/1218.0F;
+    constexpr float FR_CORRECTION = 1220.0F/1218.0F;
+    constexpr float BR_CORRECTION = 1218.0F/1218.0F;
+    constexpr float BL_CORRECTION = 1218.0F/1218.0F;
 }
 
 FlightManager::FlightManager(IMUManager& imu) :
