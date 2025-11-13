@@ -17,7 +17,10 @@ namespace {
     constexpr uint8_t JOYSTICK_DEADZONE = 3;
 
     constexpr float PR_ANGLE = 10.0F;
-    constexpr float Y_RATE = 50.0F;
+    constexpr float Y_RATE = 150.0F;
+
+    constexpr float PR_CHANGE_PER_LOOP = 25.0F;
+    constexpr float Y_CHANGE_PER_LOOP = 70.0F;
 
     constexpr float YAW_PID_SCALE = 1.0F;
     constexpr float PITCH_PID_SCALE = 1.0F;
@@ -106,9 +109,30 @@ void FlightManager::mapJoystick(const JoystickData& joystickData) {
 }
 
 void FlightManager::calculatePID() {
-    m_yawPidOutput = m_pidY.compute(m_imuData.gyroZ, m_yawMap, m_deltaTime);
-    m_pitchPidOutput = m_pidP.compute(m_imuData.pitch, m_pitchMap, m_deltaTime);
-    m_rollPidOutput = m_pidR.compute(m_imuData.roll, m_rollMap, m_deltaTime);
+    if (m_deltaTime <= 0) { return; }
+    m_actualGyroZ = m_imuData.gyroZ;
+    m_actualPitch = m_imuData.pitch;
+    m_actualRoll = m_imuData.roll;
+
+    if (abs(m_actualGyroZ - m_lastGyroZ) > Y_CHANGE_PER_LOOP) {
+        m_actualGyroZ = m_lastGyroZ;
+    } else {
+        m_lastGyroZ = m_actualGyroZ;
+    }
+    if (abs(m_actualPitch - m_lastPitch) > PR_CHANGE_PER_LOOP) {
+        m_actualPitch = m_lastPitch;
+    } else {
+        m_lastPitch = m_actualPitch;
+    }
+    if (abs(m_actualRoll - m_lastRoll) > PR_CHANGE_PER_LOOP) {
+        m_actualRoll = m_lastRoll;
+    } else {
+        m_lastRoll = m_actualRoll;
+    }
+
+    m_yawPidOutput = m_pidY.compute(m_actualGyroZ, m_yawMap, m_deltaTime);
+    m_pitchPidOutput = m_pidP.compute(m_actualPitch, m_pitchMap, m_deltaTime);
+    m_rollPidOutput = m_pidR.compute(m_actualRoll, m_rollMap, m_deltaTime);
 }
 
 void FlightManager::writeMotors() {
