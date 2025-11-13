@@ -28,6 +28,14 @@ class FlightManager {
         float m_pitchPidOutput{};
         float m_rollPidOutput{};
 
+        float m_lastRoll{};
+        float m_lastPitch{};
+        float m_lastGyroZ{};
+
+        float m_actualRoll{};
+        float m_actualPitch{};
+        float m_actualGyroZ{};
+
         unsigned long m_previousDebugTime{};
 
         unsigned long m_previousTime{};
