@@ -39,13 +39,12 @@ void SystemManager::setup() {
 
 void SystemManager::loop() {
     m_web.update();
-
     m_imu.update();
+
     bool hasStateChangeRequest = m_web.hasStateChangeRequest();
     JoystickData joystickData = m_web.getJoystickData();
     m_flight.update(hasStateChangeRequest, joystickData);
 
-    // m_time.update();
     // m_gps.update();
 
     unsigned long currentTime = millis();
@@ -54,13 +53,12 @@ void SystemManager::loop() {
     if (hasStateChangeRequest || sendTelemetry) {
         m_telemetryPreviousTime = currentTime;
 
-        m_wifi.update();
+        // m_wifi.update();
         m_telemetry.update();
 
         TelemetryData telemetry = m_telemetry.getTelemetry();
 
         m_web.sendTelemetry(telemetry);
-        m_web.cacheTelemetry(telemetry);
 
         // if (m_wifi.getWiFiStatus() == WL_CONNECTED) {
         //     m_database.sendDBData(telemetry);

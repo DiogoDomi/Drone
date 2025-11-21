@@ -9,11 +9,11 @@ TelemetryManager::TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightMan
     {}
 
 void TelemetryManager::update() {
-    m_telemetry.timestamp = m_time.getTimestamp();
+    // m_telemetry.timestamp = m_time.getTimestamp();
     m_telemetry.state = static_cast<uint8_t>(m_flight.getStateData());
-    m_telemetry.rssi = m_wifi.getRSSIData();
-    m_telemetry.gps = m_gps.getGPSData();
-    m_telemetry.isValid = isTelemetryValid(m_telemetry);
+    // m_telemetry.rssi = m_wifi.getRSSIData();
+    // m_telemetry.gps = m_gps.getGPSData();
+    // m_telemetry.isValid = isTelemetryValid(m_telemetry);
 }
 
 const TelemetryData& TelemetryManager::getTelemetry() const {

@@ -52,10 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         let joyDataUpdated = false;
-        if (myObj.lx !== undefined) { joystickState.lx = myObj.lx; joyDataUpdated = true; }
         if (myObj.ly !== undefined) { joystickState.ly = myObj.ly; joyDataUpdated = true; }
-        if (myObj.rx !== undefined) { joystickState.rx = myObj.rx; joyDataUpdated = true; }
-        if (myObj.ry !== undefined) { joystickState.ry = myObj.ry; joyDataUpdated = true; }
 
         if (joyDataUpdated) {
             joysticks.left.sync();

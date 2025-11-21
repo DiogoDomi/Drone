@@ -7,15 +7,13 @@
 #include "TelemetryData.h"
 
 class WebManager {
-    static const uint8_t JSON_JOYSTICK_SIZE = 120;
+    static const uint8_t JSON_JOYSTICK_SIZE = 50;
     static const uint8_t JSON_TELEMETRY_SIZE = 160;
 
     private:
 
         AsyncWebServer& m_server;
         AsyncWebSocket& m_socket;
-
-        TelemetryData m_cachedTelemetry{};
 
         JoystickData m_joystickData{};
         volatile bool m_stateChangeRequested{};
@@ -31,7 +29,6 @@ class WebManager {
         void onEventHandler(AsyncWebSocket* socket, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len);
         void handleWebSocketMessage(void* arg, uint8_t* data, size_t len);
         void onConnectSendTelemetry(AsyncWebSocketClient* client);
-        void onConnectSendJoystickData(AsyncWebSocketClient* client);
 
     public:
 

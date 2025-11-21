@@ -51,7 +51,6 @@ void WebManager::onEventHandler(AsyncWebSocket* socket, AsyncWebSocketClient* cl
     switch (type) {
         case AwsEventType::WS_EVT_CONNECT:
             onConnectSendTelemetry(client);
-            onConnectSendJoystickData(client);
             break;
         case AwsEventType::WS_EVT_DATA:
             handleWebSocketMessage(arg, data, len);
@@ -67,32 +66,13 @@ void WebManager::onEventHandler(AsyncWebSocket* socket, AsyncWebSocketClient* cl
 void WebManager::onConnectSendTelemetry(AsyncWebSocketClient* client) {
     if (!client || !client->canSend()) { return; }
 
-    m_serializeDoc.clear();
-    memset(m_outputBuffer, '\0', JSON_TELEMETRY_SIZE);
+    StaticJsonDocument<JSON_JOYSTICK_SIZE> doc{};
 
-    m_serializeDoc["state"] = m_cachedTelemetry.state;
-    m_serializeDoc["rssi"] = m_cachedTelemetry.rssi;
-    m_serializeDoc["lat"] = m_cachedTelemetry.gps.lat;
-    m_serializeDoc["lon"] = m_cachedTelemetry.gps.lon;
-    m_serializeDoc["alt"] = m_cachedTelemetry.gps.alt;
+    doc["ly"] = m_joystickData.ly;
+    char buffer[JSON_JOYSTICK_SIZE]{};
 
-    serializeJson(m_serializeDoc, m_outputBuffer, JSON_TELEMETRY_SIZE);
-    client->text(m_outputBuffer);
-}
-
-void WebManager::onConnectSendJoystickData(AsyncWebSocketClient* client) {
-    if (!client || !client->canSend()) { return; }
-
-    m_serializeDoc.clear();
-    memset(m_outputBuffer, '\0', JSON_JOYSTICK_SIZE);
-
-    m_serializeDoc["lx"] = m_joystickData.lx;
-    m_serializeDoc["ly"] = m_joystickData.ly;
-    m_serializeDoc["rx"] = m_joystickData.rx;
-    m_serializeDoc["ry"] = m_joystickData.ry;
-
-    serializeJson(m_serializeDoc, m_outputBuffer, JSON_JOYSTICK_SIZE);
-    client->text(m_outputBuffer);
+    serializeJson(doc, buffer, JSON_JOYSTICK_SIZE);
+    client->text(buffer);
 }
 
 void WebManager::handleWebSocketMessage(void* arg, uint8_t* data, size_t len) {
@@ -117,19 +97,15 @@ void WebManager::update() {
     m_socket.cleanupClients();
 }
 
-void WebManager::cacheTelemetry(const TelemetryData& telemetry) {
-    m_cachedTelemetry = telemetry;
-}
-
 void WebManager::sendTelemetry(const TelemetryData& telemetry) {
     m_serializeDoc.clear();
     memset(m_outputBuffer, '\0', JSON_TELEMETRY_SIZE);
 
     m_serializeDoc["state"] = telemetry.state;
-    m_serializeDoc["rssi"] = telemetry.rssi;
-    m_serializeDoc["lat"] = telemetry.gps.lat;
-    m_serializeDoc["lon"] = telemetry.gps.lon;
-    m_serializeDoc["alt"] = telemetry.gps.alt;
+    // m_serializeDoc["rssi"] = telemetry.rssi;
+    // m_serializeDoc["lat"] = telemetry.gps.lat;
+    // m_serializeDoc["lon"] = telemetry.gps.lon;
+    // m_serializeDoc["alt"] = telemetry.gps.alt;
 
     serializeJson(m_serializeDoc, m_outputBuffer, JSON_TELEMETRY_SIZE);
 
