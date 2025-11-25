@@ -19,6 +19,7 @@ WiFiManager::WiFiManager() :
 
 void WiFiManager::begin() {
     WiFi.mode(WiFiMode_t::WIFI_AP_STA);
+    WiFi.persistent(false);
     setupAP();
     setupSTA();
 }
@@ -29,8 +30,6 @@ void WiFiManager::setupAP() {
 }
 
 void WiFiManager::setupSTA() {
-    WiFi.setAutoReconnect(true);
-    WiFi.persistent(true);
     WiFi.begin(STA_SSID, STA_PSWD);
 }
 
@@ -41,7 +40,3 @@ void WiFiManager::update() {
         m_rssiData = Flags::WIFI_RSSI_INVALID;
     }
 }
-
-int8_t WiFiManager::getRSSIData() const { return m_rssiData; }
-
-wl_status_t WiFiManager::getWiFiStatus() const { return WiFi.status(); }

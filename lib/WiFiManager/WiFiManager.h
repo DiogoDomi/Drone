@@ -19,8 +19,14 @@ class WiFiManager {
         WiFiManager();
         void begin();
         void update();
-        int8_t getRSSIData() const;
-        wl_status_t getWiFiStatus() const;        
+
+        inline int8_t getRSSIData() const { 
+            return m_rssiData;
+        }
+
+        inline wl_status_t getWiFiStatus() const {
+            return WiFi.status();
+        }
 
 };
 

@@ -14,7 +14,10 @@ class TimeManager {
 
         void begin();
         void update();
-        uint32_t getTimestamp() const;
+
+        inline uint32_t getTimestamp() const {
+            return m_timestamp;
+        }
 
 };
 

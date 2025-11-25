@@ -12,5 +12,3 @@ void TimeManager::begin() {
 void TimeManager::update() {
     m_timestamp = time(nullptr);
 }
-
-uint32_t TimeManager::getTimestamp() const { return m_timestamp; }
