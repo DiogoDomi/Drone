@@ -3,7 +3,6 @@
 #include "Flags.h"
 
 namespace { 
-    constexpr uint16_t GPS_BAUDRATE = 9600;
     constexpr uint16_t GPS_TIMEOUT_MS = 2000;
 }
 
@@ -11,10 +10,6 @@ GPSManager::GPSManager() :
     m_swSerial(Pins::GPS::RX_PIN, Pins::GPS::TX_PIN),
     m_gpsData{Flags::GPS_INVALID_LOCATION, Flags::GPS_INVALID_LOCATION, Flags::GPS_INVALID_ALTITUDE}
     {}
-
-void GPSManager::begin() {
-    m_swSerial.begin(GPS_BAUDRATE);
-}
 
 void GPSManager::update() { 
     while (m_swSerial.available() > 0) {
@@ -34,5 +29,3 @@ void GPSManager::update() {
         m_gpsData.alt = Flags::GPS_INVALID_ALTITUDE;
     }
 }
-
-const GPSData& GPSManager::getGPSData() const { return m_gpsData; }

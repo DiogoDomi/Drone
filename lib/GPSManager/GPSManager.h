@@ -8,6 +8,8 @@
 class GPSManager {
     private:
 
+        static constexpr uint16_t GPS_BAUDRATE = 9600;
+
         TinyGPSPlus m_gps{};
         SoftwareSerial m_swSerial{};
 
@@ -16,9 +18,15 @@ class GPSManager {
     public:
 
         GPSManager();
-        void begin();
+
+        inline void begin() {
+            m_swSerial.begin(GPS_BAUDRATE);
+        }
         void update();
-        const GPSData& getGPSData() const;
+
+        inline const GPSData& getGPSData() const {
+            return m_gpsData;
+        }
 
 };
 
