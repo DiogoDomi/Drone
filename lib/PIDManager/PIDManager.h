@@ -3,18 +3,22 @@
 
 class PIDManager {
     private:
-        const float m_kP{};
-        const float m_kI{};
-        const float m_kD{};
+        float m_kP{};
+        float m_kI{};
+        float m_kD{};
 
         float m_accumulatedError{};
-        float m_previousError{};
-        float m_derivatedErrorFiltered{};
+        float m_lastFilteredRate{};
 
     public:
         PIDManager(float kP, float kI, float kD);
-        float compute(float realValue, float setpointValue, float deltaTime);
-        void reset();
+
+        float compute(float angle, float setpoint, float rate, float dt);
+
+        inline void reset() {
+            m_accumulatedError = 0.0F;
+            m_lastFilteredRate = 0.0F;
+        }
 };
 
 #endif
