@@ -11,9 +11,9 @@ class FlightManager {
 
         IMUManager& m_imu;
 
-        PIDManager m_pidY;
-        PIDManager m_pidP;
-        PIDManager m_pidR;
+        PIDManager m_pidYaw;
+        PIDManager m_pidPitch;
+        PIDManager m_pidRoll;
 
         State m_currentState{};
 
@@ -28,22 +28,34 @@ class FlightManager {
         float m_pitchPidOutput{};
         float m_rollPidOutput{};
 
-        float m_lastRoll{};
         float m_lastPitch{};
+        float m_lastRoll{};
+        float m_lastGyroX{};
+        float m_lastGyroY{};
         float m_lastGyroZ{};
 
-        float m_actualRoll{};
         float m_actualPitch{};
+        float m_actualRoll{};
+        float m_actualGyroX{};
+        float m_actualGyroY{};
         float m_actualGyroZ{};
 
-        unsigned long m_previousDebugTime{};
+        // unsigned long m_previousDebugTime{};
 
         unsigned long m_previousTime{};
         float m_deltaTime{};
 
     private:
         // void calibrateESCs();
-        float fmap(float x, float in_min, float in_max, float out_min, float out_max);
+        // void printDebug();
+        inline float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        }
+        inline float fastConstrain(float x, float minVal, float maxVal) {
+            if (x < minVal) return minVal;
+            if (x > maxVal) return maxVal;
+            return x;
+        }
 
         void setupMotors();
         void setMotorState();
@@ -53,14 +65,14 @@ class FlightManager {
         void calculatePID();
         void writeMotors();
 
-        // void printDebug();
-
     public:
 
         FlightManager(IMUManager& imu);
         void begin();
         void update(bool stateChangeRequested, const JoystickData& joystickData);
-        State getStateData() const;
+        const inline State getStateData() const {
+            return m_currentState;
+        }
 
 };
 
