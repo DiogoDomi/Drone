@@ -9,6 +9,8 @@ WebManager::WebManager(AsyncWebServer& server, AsyncWebSocket& socket) :
 void WebManager::begin() {
     LittleFS.begin();
 
+    File f = LittleFS.open()
+
     setupServer();
     setupSocket();
 

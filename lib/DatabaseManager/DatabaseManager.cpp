@@ -14,9 +14,9 @@ void DatabaseManager::begin() {
 }
 
 bool DatabaseManager::flush() {
-    if (m_logsCount == 0) return;
+    if (m_logsCount == 0) return true;
 
-    if (!m_http.begin(m_client, FIREBASE_URL)) { return; }
+    if (!m_http.begin(m_client, FIREBASE_URL)) { return false; }
 
     m_http.addHeader("Content-Type", "application/json");
 
@@ -25,16 +25,14 @@ bool DatabaseManager::flush() {
     for (uint8_t i = 0; i < m_logsCount; i++) {
         StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
 
-        
         if (m_logs[i].isValid) {
-            doc["ts"]   =   m_logs[i].timestamp;
-            doc["rssi"] =   m_logs[i].rssi;
-            doc["lat"] = m_logs[i].gps.lat;
-            doc["lon"] = m_logs[i].gps.lon;
-            doc["alt"] = m_logs[i].gps.alt;
+            doc["ts"]       = m_logs[i].timestamp;
+            doc["rssi"]     = m_logs[i].rssi;
+            doc["lat"]      = m_logs[i].gps.lat;
+            doc["lon"]      = m_logs[i].gps.lon;
+            doc["alt"]      = m_logs[i].gps.alt;
         } else {
-            doc["msg"] = "Invalid Telemetry";
-            doc["valid"] = false;
+            doc["isValid"]    = false;
         }
 
         serializeJson(doc, output, UINT8_MAX);
@@ -46,10 +44,12 @@ bool DatabaseManager::flush() {
 
     m_http.end();
     m_logsCount = 0;
+
+    return true;
 }
 
 bool DatabaseManager::addTelemetry(const TelemetryData& telemetry) {
-    if (m_logsCount >= MAX_LOGS 0) {
+    if (m_logsCount >= MAX_LOGS) {
         return false;
     }
 
