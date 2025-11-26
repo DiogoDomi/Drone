@@ -5,29 +5,56 @@ namespace {
     const char* FIREBASE_URL = "https://banco-de-dados---drone-default-rtdb.firebaseio.com/readings.json";
 }
 
-DatabaseManager::DatabaseManager() {}
+DatabaseManager::DatabaseManager() 
+    {}
 
 void DatabaseManager::begin() {
     m_client.setInsecure();
+    m_http.setReuse(true);
 }
 
-void DatabaseManager::sendDBData(const TelemetryData& telemetry) {
+bool DatabaseManager::flush() {
+    if (m_logsCount == 0) return;
+
     if (!m_http.begin(m_client, FIREBASE_URL)) { return; }
 
-    StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
-
-    doc["valid"] =  telemetry.isValid;
-    doc["ts"] =     telemetry.timestamp;
-    doc["rssi"] =   telemetry.rssi;
-    doc["lat"] =    telemetry.gps.lat;
-    doc["lon"] =    telemetry.gps.lon;
-    doc["alt"] =    telemetry.gps.alt;
-
-    char output[JSON_TELEMETRY_SIZE]{};
-    serializeJson(doc, output, JSON_TELEMETRY_SIZE);
-
     m_http.addHeader("Content-Type", "application/json");
-    m_http.POST(output);
+
+    char output[UINT8_MAX]{};
+
+    for (uint8_t i = 0; i < m_logsCount; i++) {
+        StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
+
+        
+        if (m_logs[i].isValid) {
+            doc["ts"]   =   m_logs[i].timestamp;
+            doc["rssi"] =   m_logs[i].rssi;
+            doc["lat"] = m_logs[i].gps.lat;
+            doc["lon"] = m_logs[i].gps.lon;
+            doc["alt"] = m_logs[i].gps.alt;
+        } else {
+            doc["msg"] = "Invalid Telemetry";
+            doc["valid"] = false;
+        }
+
+        serializeJson(doc, output, UINT8_MAX);
+
+        m_http.POST(output);
+
+        yield();
+    }
 
     m_http.end();
+    m_logsCount = 0;
+}
+
+bool DatabaseManager::addTelemetry(const TelemetryData& telemetry) {
+    if (m_logsCount >= MAX_LOGS 0) {
+        return false;
+    }
+
+    m_logs[m_logsCount] = telemetry;
+    m_logsCount++;
+
+    return true;
 }

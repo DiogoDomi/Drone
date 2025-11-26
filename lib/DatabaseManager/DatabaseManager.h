@@ -7,8 +7,12 @@
 
 class DatabaseManager {
     static const uint8_t JSON_TELEMETRY_SIZE = 180;
+    static const uint8_t MAX_LOGS = 100;
 
     private:
+
+        TelemetryData m_logs[MAX_LOGS]{};
+        uint8_t m_logsCount{};
 
         WiFiClientSecure m_client{};
         HTTPClient m_http{};
@@ -17,7 +21,21 @@ class DatabaseManager {
 
         DatabaseManager();
         void begin();
-        void sendDBData(const TelemetryData& telemetry);
+        bool flush();
+        bool addTelemetry(const TelemetryData& telemetry);
+
+        inline uint8_t getRemainingLogs() const {
+            if (m_logsCount >= MAX_LOGS) return 0;
+            return MAX_LOGS - m_logsCount;
+        }
+
+        inline bool isEmpty() const {
+            return m_logsCount == 0;
+        }
+
+        inline void clearLogs() {
+            m_logsCount = 0;
+        }
 
 };
 
