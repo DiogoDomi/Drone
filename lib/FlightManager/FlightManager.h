@@ -48,14 +48,6 @@ class FlightManager {
     private:
         // void calibrateESCs();
         // void printDebug();
-        inline float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
-            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-        }
-        inline float fastConstrain(float x, float minVal, float maxVal) {
-            if (x < minVal) return minVal;
-            if (x > maxVal) return maxVal;
-            return x;
-        }
 
         void setupMotors();
         void setMotorState();

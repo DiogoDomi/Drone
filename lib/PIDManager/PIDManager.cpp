@@ -1,5 +1,5 @@
 #include "PIDManager.h"
-#include "Arduino.h"
+#include "Utils.h"
 
 namespace { 
     constexpr float MAX_ACCUMULATED_ERROR = 200.0F;
@@ -18,7 +18,7 @@ float PIDManager::compute(float angle, float setpoint, float rate, float dt) {
     float P = m_kP * error;
 
     m_accumulatedError += error * dt;
-    m_accumulatedError = constrain(m_accumulatedError, -MAX_ACCUMULATED_ERROR, MAX_ACCUMULATED_ERROR);
+    m_accumulatedError = Utils::fConstrain(m_accumulatedError, -MAX_ACCUMULATED_ERROR, MAX_ACCUMULATED_ERROR);
     float I = m_kI * m_accumulatedError;
 
     float D = 0.0F;

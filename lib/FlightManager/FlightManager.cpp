@@ -2,6 +2,7 @@
 #include "FlightManager.h"
 #include "Pins.h"
 #include <cmath>
+#include "Utils.h"
 
 namespace {
     namespace Pwm {
@@ -106,7 +107,7 @@ void FlightManager::readSensors() {
 }
 
 void FlightManager::mapJoystick(const JoystickData& joystickData) {
-    m_throttleMap = static_cast<uint16_t>(fmap(static_cast<float>(joystickData.ly), -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, Pwm::IDLE_F, static_cast<float>(Pwm::MAX_TEST)));
+    m_throttleMap = static_cast<uint16_t>(Utils::fmap(static_cast<float>(joystickData.ly), -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, Pwm::IDLE_F, static_cast<float>(Pwm::MAX_TEST)));
 
     // m_yawMap    = static_cast<float>(joystickData.lx) * JOY_TO_ANGLE_FACTOR;
     m_yawMap = 0.0F;
@@ -173,10 +174,10 @@ void FlightManager::writeMotors() {
     float motor_BR_F = (throttleF * BR_CORRECTION) + scaledPitch - scaledRoll - scaledYaw;
     float motor_BL_F = (throttleF * BL_CORRECTION) + scaledPitch + scaledRoll + scaledYaw;
     
-    uint16_t motor_FL = static_cast<uint16_t>(fastConstrain(motor_FL_F, Pwm::IDLE_F, Pwm::MAX_F));
-    uint16_t motor_FR = static_cast<uint16_t>(fastConstrain(motor_FR_F, Pwm::IDLE_F, Pwm::MAX_F));
-    uint16_t motor_BR = static_cast<uint16_t>(fastConstrain(motor_BR_F, Pwm::IDLE_F, Pwm::MAX_F));
-    uint16_t motor_BL = static_cast<uint16_t>(fastConstrain(motor_BL_F, Pwm::IDLE_F, Pwm::MAX_F));
+    uint16_t motor_FL = static_cast<uint16_t>(Utils::fConstrain(motor_FL_F, Pwm::IDLE_F, Pwm::MAX_F));
+    uint16_t motor_FR = static_cast<uint16_t>(Utils::fConstrain(motor_FR_F, Pwm::IDLE_F, Pwm::MAX_F));
+    uint16_t motor_BR = static_cast<uint16_t>(Utils::fConstrain(motor_BR_F, Pwm::IDLE_F, Pwm::MAX_F));
+    uint16_t motor_BL = static_cast<uint16_t>(Utils::fConstrain(motor_BL_F, Pwm::IDLE_F, Pwm::MAX_F));
 
     analogWrite(Pins::ESC::MOTOR_FL_PIN, motor_FL);
     analogWrite(Pins::ESC::MOTOR_FR_PIN, motor_FR);
