@@ -6,7 +6,7 @@
 #include "TelemetryData.h"
 #include "FlightManager.h"
 #include "TimeManager.h"
-#include "DatabaseManager.h"
+#include "DBManager.h"
 
 class TelemetryManager {
     private:
@@ -15,7 +15,7 @@ class TelemetryManager {
         GPSManager& m_gps;
         FlightManager& m_flight;
         TimeManager& m_time;
-        DatabaseManager& m_db;
+        DBManager& m_db;
 
         TelemetryData m_telemetry{};
 
@@ -25,7 +25,7 @@ class TelemetryManager {
 
     public:
 
-        TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightManager& flight, TimeManager& time, DatabaseManager& db);
+        TelemetryManager(WiFiManager& wifi, GPSManager& gps, FlightManager& flight, TimeManager& time, DBManager& db);
         void update();
 
         inline const TelemetryData& getTelemetry() const {

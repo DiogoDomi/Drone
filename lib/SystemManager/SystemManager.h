@@ -7,7 +7,7 @@
 #include "FlightManager.h"
 #include "GPSManager.h"
 #include "TelemetryManager.h"
-#include "DatabaseManager.h"
+#include "DBManager.h"
 #include "TimeManager.h"
 
 class SystemManager {
@@ -19,7 +19,7 @@ class SystemManager {
         WiFiManager m_wifi{};
         GPSManager m_gps{};
         TimeManager m_time{};
-        DatabaseManager m_database{};
+        DBManager m_db{};
 
         FlightManager m_flight;
         WebManager m_web;

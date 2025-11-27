@@ -1,11 +1,11 @@
-#ifndef DATABASE_MANAGER_H_
-#define DATABASE_MANAGER_H_
+#ifndef DB_MANAGER_H_
+#define DB_MANAGER_H_
 
 #include <ESP8266HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include "TelemetryData.h"
 
-class DatabaseManager {
+class DBManager {
     static const uint8_t JSON_TELEMETRY_SIZE = 180;
     static const uint8_t MAX_LOGS = 100;
 
@@ -19,7 +19,7 @@ class DatabaseManager {
 
     public:
 
-        DatabaseManager();
+        DBManager();
         void begin();
         bool flush();
 

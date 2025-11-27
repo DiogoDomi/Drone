@@ -18,11 +18,11 @@ SystemManager::SystemManager() :
     m_wifi(),
     m_gps(),
     m_time(),
-    m_database(),
+    m_db(),
 
     m_flight(m_imu),
     m_web(m_server, m_socket),
-    m_telemetry(m_wifi, m_gps, m_flight, m_time, m_database),
+    m_telemetry(m_wifi, m_gps, m_flight, m_time, m_db),
 
     m_telemetryPreviousTime(0)
     // m_lastGPSLoop(0)
@@ -42,7 +42,7 @@ void SystemManager::setup() {
     m_wifi.begin();
     m_web.begin();
     // m_time.begin();
-    // m_database.begin();
+    // m_db.begin();
 
     m_telemetryPreviousTime = 0L;
 }
@@ -75,13 +75,13 @@ void SystemManager::loop() {
 
         m_web.sendTelemetry(telemetry);
 
-        // m_database.addTelemetry(telemetry);
+        // m_db.addTelemetry(telemetry);
 
         // if (m_wifi.getWiFiStatus() == WL_CONNECTED && 
-        //     m_database.getRemainingLogs() == 0 &&
+        //     m_db.getRemainingLogs() == 0 &&
         //     m_flight.getStateData() == State::DISARMED) {
 
-        //     m_database.flush();
+        //     m_db.flush();
         // }
     }
 

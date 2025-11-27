@@ -1,26 +1,26 @@
-#include "DatabaseManager.h"
+#include "DBManager.h"
 #include <ArduinoJson.h>
 
 namespace {
     const char* FIREBASE_URL = "https://banco-de-dados---drone-default-rtdb.firebaseio.com/readings.json";
 }
 
-DatabaseManager::DatabaseManager() 
+DBManager::DBManager() 
     {}
 
-void DatabaseManager::begin() {
+void DBManager::begin() {
     m_client.setInsecure();
     m_http.setReuse(true);
 }
 
-bool DatabaseManager::flush() {
+bool DBManager::flush() {
     if (m_logsCount == 0) return true;
 
     if (!m_http.begin(m_client, FIREBASE_URL)) { return false; }
 
     m_http.addHeader("Content-Type", "application/json");
 
-    char output[UINT8_MAX]{};
+    char output[JSON_TELEMETRY_SIZE]{};
 
     for (uint8_t i = 0; i < m_logsCount; i++) {
         StaticJsonDocument<JSON_TELEMETRY_SIZE> doc{};
@@ -32,10 +32,10 @@ bool DatabaseManager::flush() {
             doc["lon"]      = m_logs[i].gps.lon;
             doc["alt"]      = m_logs[i].gps.alt;
         } else {
-            doc["isValid"]    = false;
+            doc["isValid"]  = m_logs[i].isValid;
         }
 
-        serializeJson(doc, output, UINT8_MAX);
+        serializeJson(doc, output, JSON_TELEMETRY_SIZE);
 
         m_http.POST(output);
 
