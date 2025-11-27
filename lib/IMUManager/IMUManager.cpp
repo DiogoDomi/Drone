@@ -169,8 +169,8 @@ void IMUManager::update() {
         m_mpuData.roll = tmpRoll;
         m_mpuData.gyroX = tmpGyroX;
 
-        m_mpuData.pitch = tmpPitch;
-        m_mpuData.gyroY = -tmpGyroY;
+        m_mpuData.pitch = -tmpPitch;
+        m_mpuData.gyroY = tmpGyroY;
 
         m_mpuData.yaw = tmpYaw;
         m_mpuData.gyroZ = -tmpGyroZ;
