@@ -91,6 +91,7 @@ void WebManager::onConnectSendTelemetry(AsyncWebSocketClient* client) {
     StaticJsonDocument<JSON_JOYSTICK_SIZE> doc{};
 
     doc["ly"] = m_joystickData.ly;
+    doc["st"] = static_cast<int>(m_cachedTelemetry.state);
     char buffer[JSON_JOYSTICK_SIZE]{};
 
     serializeJson(doc, buffer, JSON_JOYSTICK_SIZE);
@@ -98,6 +99,7 @@ void WebManager::onConnectSendTelemetry(AsyncWebSocketClient* client) {
 }
 
 void WebManager::sendTelemetry(const TelemetryData& telemetry) {
+    updateCache(telemetry);
     m_serializeDoc.clear();
 
     m_serializeDoc["st"]    = static_cast<int>(telemetry.state);

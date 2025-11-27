@@ -16,6 +16,8 @@ class WebManager {
         AsyncWebServer& m_server;
         AsyncWebSocket& m_socket;
 
+        TelemetryData m_cachedTelemetry{};
+
         JoystickData m_joystickData{};
         volatile bool m_stateChangeRequested{};
 
@@ -40,7 +42,9 @@ class WebManager {
             m_socket.cleanupClients();
         }
 
-        void cacheTelemetry(const TelemetryData& telemetry);
+        inline void updateCache(const TelemetryData& telemetry) {
+            m_cachedTelemetry = telemetry;
+        }
         void sendTelemetry(const TelemetryData& telemetry);
 
         inline bool hasStateChangeRequest() {
