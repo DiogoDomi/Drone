@@ -18,7 +18,7 @@ namespace {
     constexpr uint8_t JOYSTICK_DEADZONE = 3;
 
     constexpr float PR_ANGLE = 10.0F;
-    constexpr float Y_RATE = 50.0F;
+    constexpr float Y_RATE = 30.0F;
 
     constexpr float PR_CHANGE_PER_LOOP = 25.0F;
     constexpr float Y_CHANGE_PER_LOOP = 70.0F;
@@ -207,33 +207,24 @@ void FlightManager::update(bool stateChangeRequested,const JoystickData& joystic
 }
 
 // void FlightManager::printDebug() {
-//     if (millis() - m_previousDebugTime > DEBUG_PRINT_INTERVAL) {
-//         m_previousDebugTime = millis();
+//     static unsigned long previousDebugTime = 0L;
+//     if (millis() - previousDebugTime > 50) {
+//         previousDebugTime = millis();
 
-//         Serial.print("Pitch : ");
-//         Serial.print(m_imuData.pitch);
-//         Serial.print(" | PitchMap: ");
-//         Serial.print(m_pitchMap);
-//         Serial.print(" | PID_P : ");
-//         Serial.println(m_pitchPidOutput);
+//         Serial.print(">Pitch : ");Serial.println(m_imuData.pitch);
+//         Serial.print(">GyroY : ");Serial.println(m_imuData.gyroY);
+//         Serial.print(">PitchMap: ");Serial.println(m_pitchMap);
+//         Serial.print(">PID_P : ");Serial.println(m_pitchPidOutput);
 
-//         Serial.print("Roll : ");
-//         Serial.print(m_imuData.roll);
-//         Serial.print(" | RollMap: ");
-//         Serial.print(m_rollMap);
-//         Serial.print(" | PID_R : ");
-//         Serial.println(m_rollPidOutput);
+//         Serial.print(">Roll : ");Serial.println(m_imuData.roll);
+//         Serial.print(">GyroX : ");Serial.println(m_imuData.gyroX);
+//         Serial.print(">RollMap: ");Serial.println(m_rollMap);
+//         Serial.print(">PID_R : ");Serial.println(m_rollPidOutput);
 
-//         Serial.print("Yaw : ");
-//         Serial.print(m_imuData.yaw);
-//         Serial.print(" | GyroZ : ");
-//         Serial.print(m_imuData.gyroZ);
-//         Serial.print(" | YawMap: ");
-//         Serial.print(m_yawMap);
-//         Serial.print(" | PID_Y : ");
-//         Serial.println(m_yawPidOutput);
-
-//         Serial.println("---------------------------------------------");
+//         Serial.print(">Yaw : ");Serial.println(m_imuData.yaw);
+//         Serial.print(">GyroZ : ");Serial.println(m_imuData.gyroZ);
+//         Serial.print(">YawMap: ");Serial.println(m_yawMap);
+//         Serial.print(">PID_Y : ");Serial.println(m_yawPidOutput);
 //     }
 // }
 

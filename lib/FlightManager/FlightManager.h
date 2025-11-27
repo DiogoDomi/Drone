@@ -40,8 +40,6 @@ class FlightManager {
         float m_actualGyroY{};
         float m_actualGyroZ{};
 
-        // unsigned long m_previousDebugTime{};
-
         unsigned long m_previousTime{};
         float m_deltaTime{};
 
