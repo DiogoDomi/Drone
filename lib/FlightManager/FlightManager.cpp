@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "FlightManager.h"
 #include "Pins.h"
-#include <cmath>
 #include "Utils.h"
 
 namespace {
@@ -9,17 +8,13 @@ namespace {
         constexpr uint16_t FREQUENCY = 400;
         constexpr uint16_t RANGE = 2500;
 
-        constexpr uint16_t MAX_F = 2000.0F;
-        constexpr uint16_t MIN_F = 1000.0F;
-        constexpr uint16_t IDLE_F = 1100.0F;
-
         constexpr uint16_t MAX = 2000;
         constexpr uint16_t MIN = 1000;
         constexpr uint16_t IDLE = 1100;
         constexpr uint16_t MAX_TEST = 1700;
     };
 
-    constexpr float ABS_JOYSTICK_RANGE = 100.0F;
+    constexpr uint8_t ABS_JOYSTICK_RANGE = 100;
     constexpr uint8_t JOYSTICK_DEADZONE = 3;
 
     constexpr float PR_ANGLE = 10.0F;
@@ -103,17 +98,24 @@ void FlightManager::processStateLogic(bool stateChangeRequested, const JoystickD
 }
 
 void FlightManager::readSensors() {
+    m_imu.update();
     m_imuData = m_imu.getMPUData();
 }
 
 void FlightManager::mapJoystick(const JoystickData& joystickData) {
-    m_throttleMap = static_cast<uint16_t>(Utils::fmap(static_cast<float>(joystickData.ly), -ABS_JOYSTICK_RANGE, ABS_JOYSTICK_RANGE, Pwm::IDLE_F, static_cast<float>(Pwm::MAX_TEST)));
-
-    // m_yawMap    = static_cast<float>(joystickData.lx) * JOY_TO_ANGLE_FACTOR;
-    m_yawMap = 0.0F;
-
-    m_pitchMap  = static_cast<float>(joystickData.ry) * JOY_TO_ANGLE_FACTOR;
-    m_rollMap   = static_cast<float>(joystickData.rx) * JOY_TO_ANGLE_FACTOR;
+    m_throttleMap = static_cast<uint16_t>(
+        Utils::mMap(
+            static_cast<float>(joystickData.ly),
+            static_cast<float>(-ABS_JOYSTICK_RANGE),
+            static_cast<float>(ABS_JOYSTICK_RANGE),
+            static_cast<float>(Pwm::IDLE),
+            static_cast<float>(Pwm::MAX_TEST)
+        )
+    );
+    // m_yawMap   = static_cast<float>(joystickData.lx) * JOY_TO_ANGLE_FACTOR;
+    m_yawMap   = 0.0F;
+    m_pitchMap = static_cast<float>(joystickData.ry) * JOY_TO_ANGLE_FACTOR;
+    m_rollMap  = static_cast<float>(joystickData.rx) * JOY_TO_ANGLE_FACTOR;
 }
 
 void FlightManager::calculatePID() {
@@ -129,7 +131,7 @@ void FlightManager::calculatePID() {
     m_actualGyroY = m_imuData.gyroY;
     m_actualGyroZ = m_imuData.gyroZ;
     m_actualPitch = m_imuData.pitch;
-    m_actualRoll = m_imuData.roll;
+    m_actualRoll  = m_imuData.roll;
 
     if (std::abs(m_actualGyroX - m_lastGyroX) > Y_CHANGE_PER_LOOP) {
         m_actualGyroX = m_lastGyroX;
@@ -167,17 +169,15 @@ void FlightManager::writeMotors() {
     float scaledPitch = m_pitchPidOutput * PITCH_PID_SCALE;
     float scaledRoll = m_rollPidOutput * ROLL_PID_SCALE;
 
-    float throttleF = static_cast<float>(m_throttleMap);
-
-    float motor_FL_F = (throttleF * FL_CORRECTION) - scaledPitch + scaledRoll - scaledYaw;
-    float motor_FR_F = (throttleF * FR_CORRECTION) - scaledPitch - scaledRoll + scaledYaw;
-    float motor_BR_F = (throttleF * BR_CORRECTION) + scaledPitch - scaledRoll - scaledYaw;
-    float motor_BL_F = (throttleF * BL_CORRECTION) + scaledPitch + scaledRoll + scaledYaw;
+    float motor_FL_F = (static_cast<float>(m_throttleMap) * FL_CORRECTION) - scaledPitch + scaledRoll - scaledYaw;
+    float motor_FR_F = (static_cast<float>(m_throttleMap) * FR_CORRECTION) - scaledPitch - scaledRoll + scaledYaw;
+    float motor_BR_F = (static_cast<float>(m_throttleMap) * BR_CORRECTION) + scaledPitch - scaledRoll - scaledYaw;
+    float motor_BL_F = (static_cast<float>(m_throttleMap) * BL_CORRECTION) + scaledPitch + scaledRoll + scaledYaw;
     
-    uint16_t motor_FL = static_cast<uint16_t>(Utils::fConstrain(motor_FL_F, Pwm::IDLE_F, Pwm::MAX_F));
-    uint16_t motor_FR = static_cast<uint16_t>(Utils::fConstrain(motor_FR_F, Pwm::IDLE_F, Pwm::MAX_F));
-    uint16_t motor_BR = static_cast<uint16_t>(Utils::fConstrain(motor_BR_F, Pwm::IDLE_F, Pwm::MAX_F));
-    uint16_t motor_BL = static_cast<uint16_t>(Utils::fConstrain(motor_BL_F, Pwm::IDLE_F, Pwm::MAX_F));
+    uint16_t motor_FL = static_cast<uint16_t>(Utils::mConstrain(motor_FL_F, static_cast<float>(Pwm::IDLE), static_cast<float>(Pwm::MAX)));
+    uint16_t motor_FR = static_cast<uint16_t>(Utils::mConstrain(motor_FR_F, static_cast<float>(Pwm::IDLE), static_cast<float>(Pwm::MAX)));
+    uint16_t motor_BR = static_cast<uint16_t>(Utils::mConstrain(motor_BR_F, static_cast<float>(Pwm::IDLE), static_cast<float>(Pwm::MAX)));
+    uint16_t motor_BL = static_cast<uint16_t>(Utils::mConstrain(motor_BL_F, static_cast<float>(Pwm::IDLE), static_cast<float>(Pwm::MAX)));
 
     analogWrite(Pins::ESC::MOTOR_FL_PIN, motor_FL);
     analogWrite(Pins::ESC::MOTOR_FR_PIN, motor_FR);
