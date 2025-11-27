@@ -19,6 +19,7 @@ WiFiManager::WiFiManager() :
 
 void WiFiManager::begin() {
     WiFi.mode(WiFiMode_t::WIFI_AP_STA);
+    WiFi.setSleepMode(WIFI_NONE_SLEEP);
     WiFi.persistent(false);
     setupAP();
     setupSTA();
