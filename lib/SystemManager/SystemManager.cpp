@@ -24,13 +24,14 @@ SystemManager::SystemManager() :
     m_web(m_server, m_socket),
     m_telemetry(m_wifi, m_gps, m_flight, m_time, m_db),
 
-    m_telemetryPreviousTime(0)
-    // m_lastGPSLoop(0)
+    m_telemetryPreviousTime(0),
+    m_lastGPSLoop(0)
     {}
 
 void SystemManager::setup() {
+    m_wifi.begin();
+    m_web.begin();
     m_flight.begin();
-    // m_gps.begin();
 
     m_telemetryPreviousTime = millis();
 
@@ -38,9 +39,11 @@ void SystemManager::setup() {
         yield();
     }
 
+    m_telemetry.update();
+    m_web.updateCache(m_telemetry.getTelemetry());
+
+    // m_gps.begin();
     m_imu.begin();
-    m_wifi.begin();
-    m_web.begin();
     // m_time.begin();
     // m_db.begin();
 
@@ -62,10 +65,10 @@ void SystemManager::loop() {
     //     m_lastGPSLoop = currentTime;
     // }
 
-    bool sendTelemetry = (currentTime - m_telemetryPreviousTime >= TELEMETRY_INTERVAL);
+    // bool sendTelemetry = (currentTime - m_telemetryPreviousTime >= TELEMETRY_INTERVAL);
 
-    if (hasStateChangeRequest || sendTelemetry) {
-        m_telemetryPreviousTime = currentTime;
+    if (hasStateChangeRequest) {
+        // m_telemetryPreviousTime = currentTime;
 
         // m_wifi.update();
 
