@@ -18,7 +18,7 @@ float PIDManager::compute(float angle, float setpoint, float rate, float dt) {
     float P = m_kP * error;
 
     m_accumulatedError += error * dt;
-    m_accumulatedError = Utils::fConstrain(m_accumulatedError, -MAX_ACCUMULATED_ERROR, MAX_ACCUMULATED_ERROR);
+    m_accumulatedError = Utils::mConstrain(m_accumulatedError, -MAX_ACCUMULATED_ERROR, MAX_ACCUMULATED_ERROR);
     float I = m_kI * m_accumulatedError;
 
     float D = 0.0F;
