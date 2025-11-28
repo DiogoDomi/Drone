@@ -51,7 +51,7 @@ void SystemManager::setup() {
 }
 
 void SystemManager::loop() {
-    unsigned long currentTime = millis();
+    // unsigned long currentTime = millis();
 
     m_web.update();
 
