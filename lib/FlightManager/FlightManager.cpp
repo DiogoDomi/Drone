@@ -231,15 +231,25 @@ void FlightManager::update(bool stateChangeRequested,const JoystickData& joystic
 // }
 
 // void FlightManager::calibrateESCs() {
-//     setupMotors();
-//     Serial.println("Enviando sinal MÁXIMO (Pwm::MAX)...");
-//     m_motorFL.writeMicroseconds(Pwm::MAX);
-//     m_motorFR.writeMicroseconds(Pwm::MAX);
-//     m_motorBR.writeMicroseconds(Pwm::MAX);
-//     m_motorBL.writeMicroseconds(Pwm::MAX);
-//     delay(8000);
-//     m_motorFL.writeMicroseconds(Pwm::MIN);
-//     m_motorFR.writeMicroseconds(Pwm::MIN);
-//     m_motorBR.writeMicroseconds(Pwm::MIN);
-//     m_motorBL.writeMicroseconds(Pwm::MIN);
+//     Serial.println("Iniciando calibração de ESCs");
+//     const int PINS[4] = {Pins::ESC::MOTOR_FL_PIN, Pins::ESC::MOTOR_FR_PIN, Pins::ESC::MOTOR_BR_PIN, Pins::ESC::MOTOR_BL_PIN};
+
+//     analogWriteFreq(Pwm::FREQUENCY);
+//     analogWriteRange(Pwm::RANGE);
+
+//     for (int pin : PINS) {
+//         pinMode(pin, OUTPUT);
+//         analogWrite(pin, Pwm::MAX);
+//     }
+
+//     Serial.println("LIGAR A BATERIA AGORA");
+//     Serial.println("Esc fazendo beep especial de calibração");
+//     delay(5000);
+
+//     for (int pin : PINS) {
+//         analogWrite(pin, Pwm::MIN);
+//     }
+
+//     Serial.println("Esc fez beep longo de confirmação da calibração");
+//     Serial.println("Escs calibrados!");
 // }
