@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-    const webSocket = new WebSocket("ws://192.168.4.200/ws");
+    // Substituir o `localhost` pelo seu ip de rede local
+    const webSocket = new WebSocket("ws:localhost/ws");
 
     const DRONE_STATE = {
         0: "DISARMED",
